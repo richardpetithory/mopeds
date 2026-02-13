@@ -1,10 +1,7 @@
-from pprint import pprint
-
-from django.conf import settings
 from django.contrib import admin
 
-from bakers.models import Team, TeamMembership
 from bakers.models import Race, RaceDay, RaceTeam, RaceTeamTime
+from bakers.models import Team, TeamMembership
 
 
 class TeamAdmin(admin.ModelAdmin):

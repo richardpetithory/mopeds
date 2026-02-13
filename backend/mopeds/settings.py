@@ -38,11 +38,9 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "graphene_django",
     "corsheaders",
-    # "ariadne",
     "users",
     "bakers",
     "pages",
-    # "gp",
     "rallies",
 ]
 
@@ -135,6 +133,4 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-GRAPHENE = {
-    "SCHEMA": "django_root.schema.schema"
-}
+GRAPHENE = {"SCHEMA": "django_root.schema.schema"}

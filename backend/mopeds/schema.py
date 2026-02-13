@@ -1,17 +1,24 @@
 import graphene
 
-import pages.schema
-import rallies.schema
+import bakers.schema
 import users.schema
 
 
 class Query(
-    pages.schema.Query,
-    rallies.schema.Query,
-    users.schema.Query,
-    graphene.ObjectType
+    bakers.schema.Queries,
+    # pages.schema.Query,
+    # rallies.schema.Query,
+    users.schema.Queries,
+    graphene.ObjectType,
 ):
     pass
 
 
-schema = graphene.Schema(query=Query)
+class Mutation(
+    bakers.schema.Mutations,
+    graphene.ObjectType,
+):
+    pass
+
+
+schema = graphene.Schema(query=Query, mutation=Mutation)
