@@ -1,0 +1,9 @@
+Django==6.0.2
+django-cors-headers==4.9.0
+django-stubs==5.2.9
+django-stubs-ext==5.2.9
+graphene==3.4.3
+graphene-django==3.2.3
+pillow==12.1.1
+psycopg2-binary==2.9.11
+whitenoise==6.11.0
