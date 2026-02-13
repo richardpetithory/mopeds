@@ -40,9 +40,9 @@ class TeamType(DjangoObjectType):
         filter_fields = []
         interfaces = (relay.Node,)
 
-    logo_url = graphene.String()
+    logo = graphene.String()
 
-    def resolve_logo_url(self, info):
+    def resolve_logo(self, info):
         if self.logo:
             return info.context.build_absolute_uri(self.logo.url)
         return None
@@ -61,6 +61,15 @@ class Queries(graphene.ObjectType):
 
     race_day = relay.Node.Field(RaceDayType)
     race_days = DjangoFilterConnectionField(RaceDayType)
+
+    race_team = relay.Node.Field(RaceTeamType)
+    race_teams = DjangoFilterConnectionField(RaceTeamType)
+
+    race_team_time = relay.Node.Field(RaceTeamTimeType)
+    race_team_times = DjangoFilterConnectionField(RaceTeamTimeType)
+
+    team = relay.Node.Field(TeamType)
+    teams = DjangoFilterConnectionField(TeamType)
 
 
 class SaveRaceMutation(graphene.Mutation):

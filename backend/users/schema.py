@@ -15,5 +15,13 @@ class UserType(DjangoObjectType):
 
 
 class Queries(graphene.ObjectType):
+    me = graphene.Field(UserType)
     user = relay.Node.Field(UserType)
     users = DjangoFilterConnectionField(UserType)
+
+    @staticmethod
+    def resolve_me(_, info):
+        user = info.context.user
+        if user.is_authenticated:
+            return user
+        return None
