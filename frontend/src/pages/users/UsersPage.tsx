@@ -1,23 +1,7 @@
-import {graphql} from "relay-runtime"
-import {useLazyLoadQuery} from "react-relay"
+import {useCurrentUserContext} from "../../lib/userContext/userContext.ts";
 
 export const UsersPage = () => {
-  const UsersQuery = graphql`
-    query Users {
-      users {
-        edges {
-          node {
-            id
-            name
-          }
-        }
-      }
-    }
-  `
+  const user = useCurrentUserContext();
 
-  const data = useLazyLoadQuery(UsersQuery, {})
-
-  console.log(data)
-
-  return <div>Users</div>
-}
+  return <div>{user?.name}</div>;
+};

@@ -1,11 +1,10 @@
 import graphene
 
-import bakers.schema
 import users.schema
 
 
 class Query(
-    bakers.schema.Queries,
+    # bakers.schema.Queries,
     # pages.schema.Query,
     # rallies.schema.Query,
     users.schema.Queries,
@@ -15,7 +14,8 @@ class Query(
 
 
 class Mutation(
-    bakers.schema.Mutations,
+    # bakers.schema.Mutations,
+    users.schema.Mutations,
     graphene.ObjectType,
 ):
     pass

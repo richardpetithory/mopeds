@@ -1,7 +1,6 @@
 import graphene
-from graphene import relay
+import graphql_jwt
 from graphene_django import DjangoObjectType
-from graphene_django.filter import DjangoFilterConnectionField
 
 from .models import User
 
@@ -9,19 +8,34 @@ from .models import User
 class UserType(DjangoObjectType):
     class Meta:
         model = User
-        filter_fields = []
         exclude_fields = ("password",)
-        interfaces = (relay.Node,)
 
 
 class Queries(graphene.ObjectType):
     me = graphene.Field(UserType)
-    user = relay.Node.Field(UserType)
-    users = DjangoFilterConnectionField(UserType)
+    user = graphene.Field(UserType, pk=graphene.String(required=True))
+    users = graphene.List(UserType)
 
     @staticmethod
-    def resolve_me(_, info):
+    def resolve_user(_, info: graphene.ResolveInfo, pk):
+        try:
+            return User.objects.get(pk=pk)
+        except User.DoesNotExist:
+            return None
+
+    @staticmethod
+    def resolve_users(_, info: graphene.ResolveInfo):
+        return User.objects.all()
+
+    @staticmethod
+    def resolve_me(_, info: graphene.ResolveInfo):
         user = info.context.user
         if user.is_authenticated:
             return user
         return None
+
+
+class Mutations(graphene.ObjectType):
+    token_auth = graphql_jwt.ObtainJSONWebToken.Field()
+    verify_token = graphql_jwt.Verify.Field()
+    refresh_token = graphql_jwt.Refresh.Field()
