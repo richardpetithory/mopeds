@@ -1,13 +1,13 @@
-import {gql} from "@apollo/client";
-import {createContext, useContext} from "react";
+import {gql} from "@apollo/client"
+import {createContext, useContext} from "react"
 
 export interface CurrentUserInfo {
-  id: number | null;
-  name: string;
+  id: number | null
+  name: string
 }
 
 export interface CurrentUserInfoResponse {
-  me: CurrentUserInfo;
+  me: CurrentUserInfo
 }
 
 export const GQL_CURRENT_USER_INFO = gql`
@@ -25,10 +25,10 @@ export const GQL_CURRENT_USER_INFO = gql`
       #      teamSet
     }
   }
-`;
+`
 
-export const UserContext = createContext<CurrentUserInfo | null>(null);
+export const UserContext = createContext<CurrentUserInfo | null>(null)
 
 export const useCurrentUserContext = (): CurrentUserInfo | null => {
-  return useContext(UserContext);
-};
+  return useContext(UserContext)
+}

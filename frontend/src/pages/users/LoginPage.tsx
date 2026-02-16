@@ -1,12 +1,12 @@
-import {gql} from "@apollo/client";
-import {useMutation} from "@apollo/client/react";
-import {useState} from "react";
+import {gql} from "@apollo/client"
+import {useMutation} from "@apollo/client/react"
+import {useState} from "react"
 
 type TokenAuthResponse = {
   tokenAuth: {
-    token: string;
-  };
-};
+    token: string
+  }
+}
 
 const LOGIN_MUTATION = gql`
   mutation TokenAuth($email: String!, $password: String!) {
@@ -14,25 +14,25 @@ const LOGIN_MUTATION = gql`
       token
     }
   }
-`;
+`
 
 const LoginPage = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [login, {loading, error}] = useMutation<TokenAuthResponse>(LOGIN_MUTATION);
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [login, {loading, error}] = useMutation<TokenAuthResponse>(LOGIN_MUTATION)
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
     try {
-      const {data} = await login({variables: {email, password}});
+      const {data} = await login({variables: {email, password}})
       if (data && data.tokenAuth && data.tokenAuth.token) {
-        sessionStorage.setItem("token", data.tokenAuth.token);
+        sessionStorage.setItem("token", data.tokenAuth.token)
         // Optionally redirect or update UI here
       }
     } catch {
       // Error handling
     }
-  };
+  }
   //
   // const {
   //   handleSubmit,
@@ -58,7 +58,7 @@ const LoginPage = () => {
       </button>
       {error && <div style={{color: "red"}}>Login failed</div>}
     </form>
-  );
-};
+  )
+}
 
-export default LoginPage;
+export default LoginPage
