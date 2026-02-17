@@ -84,7 +84,7 @@ class RaceTeamTime(models.Model):
             return f"{self.duration}"
 
     def __str__(self):
-        return f"Time for {self.race_team.team} on {self.day}: {self.result}"
+        return f"{self.id}: Time for {self.race_team.team} on {self.day}: {self.result}"
 
 
 def upload_to(instance, filename):

@@ -22,6 +22,7 @@ class RaceTeamType(DjangoObjectType):
 
 
 class RaceSummary(graphene.ObjectType):
+    team_id = graphene.Int()
     team_name = graphene.String()
     total_duration_hours = graphene.String()
 
@@ -90,10 +91,11 @@ class Queries(graphene.ObjectType):
 
     @staticmethod
     def resolve_race_summary(_, info: graphene.ResolveInfo, race_pk):
-
         return (
             RaceTeamTime.objects.filter(day__race_id=race_pk)
-            .values(team_name=F("race_team__team__name"))
+            .values(
+                team_id=F("race_team__team__id"), team_name=F("race_team__team__name")
+            )
             .annotate(
                 total_duration_hours=Sum(F("duration"), output_field=DurationField())
             )

@@ -4,12 +4,15 @@ import {useQuery} from "@apollo/client/react"
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@catalyst/table.tsx"
 import {Link, useParams} from "react-router"
 
+export interface RaceSummary {
+  teamId: number
+  teamName: string
+  totalDurationHours: string
+}
+
 export interface RaceDaysResponse {
   raceDays: RaceDay[]
-  raceSummary: {
-    teamName: string
-    totalDurationHours: string
-  }[]
+  raceSummary: RaceSummary[]
 }
 
 export const GQL_RACE_DAY_LIST = gql`
@@ -19,6 +22,7 @@ export const GQL_RACE_DAY_LIST = gql`
       day
     }
     raceSummary(racePk: $racePk) {
+      teamId
       teamName
       totalDurationHours
     }
@@ -34,6 +38,8 @@ export const RacePage = () => {
     },
   })
 
+  console.log(data)
+
   if (!data || loading) return null
 
   return (
@@ -46,12 +52,14 @@ export const RacePage = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.raceSummary.map((summaryRecord) => (
-            <TableRow key={summaryRecord.teamName}>
-              <TableCell className="font-medium">{summaryRecord.teamName}</TableCell>
-              <TableCell>{summaryRecord.totalDurationHours}</TableCell>
-            </TableRow>
-          ))}
+          {data.raceSummary.map((summaryRecord) => {
+            return (
+              <TableRow key={summaryRecord.teamId}>
+                <TableCell className="font-medium">{summaryRecord.teamName}</TableCell>
+                <TableCell className="font-medium">{summaryRecord.totalDurationHours}</TableCell>
+              </TableRow>
+            )
+          })}
         </TableBody>
       </Table>
 
