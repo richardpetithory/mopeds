@@ -4,15 +4,27 @@ import {createContext, useContext} from "react"
 export interface CurrentUserInfo {
   id: number | null
   name: string
+  email: string
+  dateJoined: string
+  isActive: boolean
+  isStaff: boolean
+  isSuperuser: boolean
+  lastLogin: string | null
+}
+
+export interface UserContext {
+  token: string | null
+  setToken: (token: string | null) => void
+  currentUser: CurrentUserInfo | null
 }
 
 export interface CurrentUserInfoResponse {
-  me: CurrentUserInfo
+  currentUser: CurrentUserInfo
 }
 
 export const GQL_CURRENT_USER_INFO = gql`
   query CurrentUserInfo {
-    me {
+    currentUser {
       id
       name
       email
@@ -27,8 +39,12 @@ export const GQL_CURRENT_USER_INFO = gql`
   }
 `
 
-export const UserContext = createContext<CurrentUserInfo | null>(null)
+export const UserContext = createContext<UserContext>({
+  token: null,
+  setToken: () => {},
+  currentUser: null,
+})
 
-export const useCurrentUserContext = (): CurrentUserInfo | null => {
+export const useUserContext = (): UserContext => {
   return useContext(UserContext)
 }

@@ -1,13 +1,32 @@
-import {useQuery} from "@apollo/client/react"
-import {type PropsWithChildren} from "react"
-import {type CurrentUserInfoResponse, GQL_CURRENT_USER_INFO, UserContext} from "./userContext.ts"
+import {useLazyQuery} from "@apollo/client/react"
+import {type PropsWithChildren, useState} from "react"
+import {type CurrentUserInfo, type CurrentUserInfoResponse, GQL_CURRENT_USER_INFO, UserContext} from "./userContext.ts"
 
 export const UserContextProvider = ({children}: PropsWithChildren) => {
-  const {data, loading} = useQuery<CurrentUserInfoResponse>(GQL_CURRENT_USER_INFO)
+  const [token, setToken_] = useState<string | null>(localStorage.getItem("token"))
+  const [currentUser, setCurrentUser] = useState<CurrentUserInfo | null>(null)
 
-  if (!data || loading) {
-    return null
+  const [getCurrentUserQuery] = useLazyQuery<CurrentUserInfoResponse>(GQL_CURRENT_USER_INFO)
+
+  const setToken = (newToken: string | null) => {
+    if (newToken) {
+      getCurrentUserQuery().then((currentUserInfo) => {
+        setCurrentUser(currentUserInfo?.data?.currentUser || null)
+      })
+
+      localStorage.setItem("token", newToken)
+    } else {
+      localStorage.removeItem("token")
+    }
+
+    setToken_(newToken)
   }
 
-  return <UserContext.Provider value={data.me}>{children}</UserContext.Provider>
+  const contextValue = {
+    token,
+    setToken,
+    currentUser: currentUser,
+  }
+
+  return <UserContext.Provider value={contextValue}>{children}</UserContext.Provider>
 }

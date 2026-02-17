@@ -12,7 +12,7 @@ class UserType(DjangoObjectType):
 
 
 class Queries(graphene.ObjectType):
-    me = graphene.Field(UserType)
+    current_user = graphene.Field(UserType)
     user = graphene.Field(UserType, pk=graphene.String(required=True))
     users = graphene.List(UserType)
 
@@ -28,7 +28,7 @@ class Queries(graphene.ObjectType):
         return User.objects.all()
 
     @staticmethod
-    def resolve_me(_, info: graphene.ResolveInfo):
+    def resolve_current_user(_, info: graphene.ResolveInfo):
         user = info.context.user
         if user.is_authenticated:
             return user

@@ -1,6 +1,10 @@
 @import "tailwindcss";
 
-@theme {
-  --font-sans: Inter, sans-serif;
-  --font-sans--font-feature-settings: "cv11";
+/*@plugin "daisyui";*/
+
+@plugin "daisyui" {
+  themes:
+    light --default,
+    dark --prefersdark,
+    business;
 }

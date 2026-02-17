@@ -4,10 +4,11 @@ import * as path from "node:path"
 import {defineConfig} from "vite"
 
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [tailwindcss(), react()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src"),
+      "@catalyst": path.resolve(__dirname, "catalyst"),
     },
   },
 })
