@@ -20,7 +20,7 @@ export const GQL_RACE_TEAM_TIME_LIST = gql`
           name
         }
       }
-      durationHours
+      duration
       dnf
     }
   }
@@ -52,7 +52,7 @@ export const RaceTeamTimesPage = () => {
         {data.raceTeamTimes.map((raceTeamTime: RaceTeamTime) => (
           <TableRow key={raceTeamTime.id}>
             <TableCell className="font-medium">{raceTeamTime.raceTeam.team.name}</TableCell>
-            <TableCell className="font-medium">{raceTeamTime.durationHours}</TableCell>
+            <TableCell className="font-medium">{raceTeamTime.duration}</TableCell>
             <TableCell className="font-medium">{raceTeamTime.dnf}</TableCell>
           </TableRow>
         ))}

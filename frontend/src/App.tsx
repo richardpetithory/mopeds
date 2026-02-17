@@ -3,7 +3,7 @@ import {client} from "@/lib/apiClient.ts"
 import {UserContextProvider} from "@/lib/userContext/UserContextProvider.tsx"
 import {LoginPage} from "@/pages/auth/LoginPage.tsx"
 import {LogoutPage} from "@/pages/auth/LogoutPage.tsx"
-import {RaceDaysPage} from "@/pages/bakers/RaceDaysPage.tsx"
+import {RacePage} from "@/pages/bakers/RacePage.tsx"
 import {RacesPage} from "@/pages/bakers/RacesPage.tsx"
 import {RaceTeamTimesPage} from "@/pages/bakers/RaceTeamTimesPage.tsx"
 import {TeamPage} from "@/pages/bakers/TeamPage.tsx"
@@ -31,7 +31,7 @@ const routes: RouteObject[] = [
         children: [
           {index: true, element: <Navigate to={"races"} />},
           {path: "races", element: <RacesPage />},
-          {path: "races/:racePk", element: <RaceDaysPage />},
+          {path: "races/:racePk", element: <RacePage />},
           {path: "races/:racePk/:day", element: <RaceTeamTimesPage />},
           {path: "teams", element: <TeamsPage />},
           {path: "teams/:pk", element: <TeamPage />},

@@ -1,4 +1,6 @@
 import graphene
+from django.db.models import Sum, F
+from django.db.models.fields import DurationField
 from graphene_django import DjangoObjectType
 
 from .models import Race, RaceDay, RaceTeam, RaceTeamTime, Team, TeamMembership
@@ -19,30 +21,21 @@ class RaceTeamType(DjangoObjectType):
         model = RaceTeam
 
 
+class RaceSummary(graphene.ObjectType):
+    team_name = graphene.String()
+    total_duration_hours = graphene.String()
+
+
 class RaceTeamTimeType(DjangoObjectType):
-    duration_hours = graphene.Float()
+    duration = graphene.String()
 
     class Meta:
         model = RaceTeamTime
-        exclude_fields = ("duration",)
-
-    def resolve_duration_hours(self, info):
-        # self is the Asset instance
-        if self.duration:
-            return self.duration.total_seconds() / 3600  # Convert to hours
-        return None
 
 
 class TeamType(DjangoObjectType):
     class Meta:
         model = Team
-
-    # logo = graphene.String()
-    #
-    # def resolve_logo(self, info):
-    #     if self.logo:
-    #         return info.context.build_absolute_uri(self.logo.url)
-    #     return None
 
 
 class TeamMembershipType(DjangoObjectType):
@@ -52,11 +45,6 @@ class TeamMembershipType(DjangoObjectType):
 
 class Queries(graphene.ObjectType):
     race = graphene.Field(RaceType, pk=graphene.String(required=True))
-    races = graphene.List(
-        RaceType,
-        offset=graphene.Int(0),
-        limit=graphene.Int(10),
-    )
 
     @staticmethod
     def resolve_race(_, info: graphene.ResolveInfo, pk):
@@ -65,17 +53,17 @@ class Queries(graphene.ObjectType):
         except Race.DoesNotExist:
             return None
 
+    races = graphene.List(
+        RaceType,
+        offset=graphene.Int(0),
+        limit=graphene.Int(10),
+    )
+
     @staticmethod
     def resolve_races(_, info: graphene.ResolveInfo, offset, limit):
         return Race.objects.all()[offset : offset + limit]
 
     race_day = graphene.Field(RaceDayType, pk=graphene.String(required=True))
-    race_days = graphene.List(
-        RaceDayType,
-        race_pk=graphene.String(required=True),
-        offset=graphene.Int(0),
-        limit=graphene.Int(10),
-    )
 
     @staticmethod
     def resolve_race_day(_, info: graphene.ResolveInfo, pk):
@@ -84,18 +72,35 @@ class Queries(graphene.ObjectType):
         except Race.DoesNotExist:
             return None
 
+    race_days = graphene.List(
+        RaceDayType,
+        race_pk=graphene.String(required=True),
+        offset=graphene.Int(0),
+        limit=graphene.Int(10),
+    )
+
     @staticmethod
     def resolve_race_days(_, info: graphene.ResolveInfo, race_pk, offset, limit):
         return RaceDay.objects.filter(race_id=race_pk)[offset : offset + limit]
 
-    race_team_time = graphene.Field(RaceTeamTimeType, pk=graphene.String(required=True))
-    race_team_times = graphene.List(
-        RaceTeamTimeType,
+    race_summary = graphene.List(
+        RaceSummary,
         race_pk=graphene.String(required=True),
-        race_day=graphene.String(required=True),
-        offset=graphene.Int(0),
-        limit=graphene.Int(10),
     )
+
+    @staticmethod
+    def resolve_race_summary(_, info: graphene.ResolveInfo, race_pk):
+
+        return (
+            RaceTeamTime.objects.filter(day__race_id=race_pk)
+            .values(team_name=F("race_team__team__name"))
+            .annotate(
+                total_duration_hours=Sum(F("duration"), output_field=DurationField())
+            )
+            .order_by("total_duration_hours")
+        )
+
+    race_team_time = graphene.Field(RaceTeamTimeType, pk=graphene.String(required=True))
 
     @staticmethod
     def resolve_race_team_time(_, info: graphene.ResolveInfo, pk):
@@ -103,6 +108,14 @@ class Queries(graphene.ObjectType):
             return RaceTeamTime.objects.get(id=pk)
         except RaceTeamTime.DoesNotExist:
             return None
+
+    race_team_times = graphene.List(
+        RaceTeamTimeType,
+        race_pk=graphene.String(required=True),
+        race_day=graphene.String(required=True),
+        offset=graphene.Int(0),
+        limit=graphene.Int(10),
+    )
 
     @staticmethod
     def resolve_race_team_times(
@@ -113,11 +126,6 @@ class Queries(graphene.ObjectType):
         ]
 
     team = graphene.Field(TeamType, pk=graphene.String(required=True))
-    teams = graphene.List(
-        TeamType,
-        offset=graphene.Int(0),
-        limit=graphene.Int(10),
-    )
 
     @staticmethod
     def resolve_team(_, info: graphene.ResolveInfo, pk):
@@ -125,6 +133,12 @@ class Queries(graphene.ObjectType):
             return Team.objects.get(pk=pk)
         except Team.DoesNotExist:
             return None
+
+    teams = graphene.List(
+        TeamType,
+        offset=graphene.Int(0),
+        limit=graphene.Int(10),
+    )
 
     @staticmethod
     def resolve_teams(_, info: graphene.ResolveInfo, offset, limit):

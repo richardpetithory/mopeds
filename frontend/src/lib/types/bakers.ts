@@ -35,6 +35,6 @@ export type RaceTeamTime = {
   id: number
   day: number
   raceTeam: RaceTeam
-  durationHours: string
+  duration: string
   dnf: boolean
 }
