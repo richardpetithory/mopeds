@@ -1,4 +1,5 @@
 import {type CurrentUserInfo} from "@/lib/userContext/userContext.ts"
+import {Button} from "@catalyst/button.tsx"
 import {
   Dropdown,
   DropdownButton,
@@ -15,6 +16,7 @@ import {
   ShieldCheckIcon,
   UserCircleIcon,
 } from "@heroicons/react/16/solid"
+import {useLocation} from "react-router"
 
 interface UserMenuProps {
   user: CurrentUserInfo | null
@@ -22,8 +24,12 @@ interface UserMenuProps {
 }
 
 export const UserMenu = ({user, anchor = "bottom end"}: UserMenuProps) => {
+  const {pathname} = useLocation()
+
   if (!user) {
-    return null
+    if (pathname !== "/login") {
+      return <Button href={"/login"}>Log In</Button>
+    } else return null
   }
 
   return (

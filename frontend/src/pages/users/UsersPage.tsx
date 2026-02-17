@@ -1,7 +1,7 @@
 import {useUserContext} from "@/lib/userContext/userContext.ts"
 
 export const UsersPage = () => {
-  const user = useUserContext()
+  const {currentUser} = useUserContext()
 
-  return <div>{user?.name}</div>
+  return <div>{currentUser?.name}</div>
 }

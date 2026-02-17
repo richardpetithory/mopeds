@@ -78,11 +78,8 @@ export const AppLayout = () => {
 
           <SidebarBody>
             <SidebarSection>
-              <SidebarItem href="/login" current={pathname === "/login"}>
-                <SidebarLabel>Login</SidebarLabel>
-              </SidebarItem>
-              <SidebarItem href="/logout" current={pathname === "/logout"}>
-                <SidebarLabel>Logout</SidebarLabel>
+              <SidebarItem href="/bakers" current={pathname.startsWith("/bakers")}>
+                <SidebarLabel>Races</SidebarLabel>
               </SidebarItem>
             </SidebarSection>
           </SidebarBody>
