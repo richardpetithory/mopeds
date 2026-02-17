@@ -1,7 +1,9 @@
 import graphene
+from django.db import IntegrityError
 from django.db.models import Sum, F
 from django.db.models.fields import DurationField
 from graphene_django import DjangoObjectType
+from graphql import GraphQLError
 
 from .models import Race, RaceDay, RaceTeam, RaceTeamTime, Team, TeamMembership
 
@@ -45,12 +47,12 @@ class TeamMembershipType(DjangoObjectType):
 
 
 class Queries(graphene.ObjectType):
-    race = graphene.Field(RaceType, pk=graphene.String(required=True))
+    race = graphene.Field(RaceType, id=graphene.String(required=True))
 
     @staticmethod
-    def resolve_race(_, info: graphene.ResolveInfo, pk):
+    def resolve_race(_, info: graphene.ResolveInfo, id):
         try:
-            return Race.objects.get(pk=pk)
+            return Race.objects.get(id=id)
         except Race.DoesNotExist:
             return None
 
@@ -64,35 +66,35 @@ class Queries(graphene.ObjectType):
     def resolve_races(_, info: graphene.ResolveInfo, offset, limit):
         return Race.objects.all()[offset : offset + limit]
 
-    race_day = graphene.Field(RaceDayType, pk=graphene.String(required=True))
+    race_day = graphene.Field(RaceDayType, id=graphene.String(required=True))
 
     @staticmethod
-    def resolve_race_day(_, info: graphene.ResolveInfo, pk):
+    def resolve_race_day(_, info: graphene.ResolveInfo, id):
         try:
-            return Race.objects.get(id=pk)
+            return Race.objects.get(id=id)
         except Race.DoesNotExist:
             return None
 
     race_days = graphene.List(
         RaceDayType,
-        race_pk=graphene.String(required=True),
+        race_id=graphene.String(required=True),
         offset=graphene.Int(0),
         limit=graphene.Int(10),
     )
 
     @staticmethod
-    def resolve_race_days(_, info: graphene.ResolveInfo, race_pk, offset, limit):
-        return RaceDay.objects.filter(race_id=race_pk)[offset : offset + limit]
+    def resolve_race_days(_, info: graphene.ResolveInfo, race_id, offset, limit):
+        return RaceDay.objects.filter(race_id=race_id)[offset : offset + limit]
 
     race_summary = graphene.List(
         RaceSummary,
-        race_pk=graphene.String(required=True),
+        race_id=graphene.String(required=True),
     )
 
     @staticmethod
-    def resolve_race_summary(_, info: graphene.ResolveInfo, race_pk):
+    def resolve_race_summary(_, info: graphene.ResolveInfo, race_id):
         return (
-            RaceTeamTime.objects.filter(day__race_id=race_pk)
+            RaceTeamTime.objects.filter(day__race_id=race_id)
             .values(
                 team_id=F("race_team__team__id"), team_name=F("race_team__team__name")
             )
@@ -102,18 +104,18 @@ class Queries(graphene.ObjectType):
             .order_by("total_duration_hours")
         )
 
-    race_team_time = graphene.Field(RaceTeamTimeType, pk=graphene.String(required=True))
+    race_team_time = graphene.Field(RaceTeamTimeType, id=graphene.String(required=True))
 
     @staticmethod
-    def resolve_race_team_time(_, info: graphene.ResolveInfo, pk):
+    def resolve_race_team_time(_, info: graphene.ResolveInfo, id):
         try:
-            return RaceTeamTime.objects.get(id=pk)
+            return RaceTeamTime.objects.get(id=id)
         except RaceTeamTime.DoesNotExist:
             return None
 
     race_team_times = graphene.List(
         RaceTeamTimeType,
-        race_pk=graphene.String(required=True),
+        race_id=graphene.String(required=True),
         race_day=graphene.String(required=True),
         offset=graphene.Int(0),
         limit=graphene.Int(10),
@@ -121,18 +123,18 @@ class Queries(graphene.ObjectType):
 
     @staticmethod
     def resolve_race_team_times(
-        _, info: graphene.ResolveInfo, race_pk, race_day, offset, limit
+        _, info: graphene.ResolveInfo, race_id, race_day, offset, limit
     ):
-        return RaceTeamTime.objects.filter(day__race=race_pk, day__day=race_day)[
+        return RaceTeamTime.objects.filter(day__race=race_id, day__day=race_day)[
             offset : offset + limit
         ]
 
-    team = graphene.Field(TeamType, pk=graphene.String(required=True))
+    team = graphene.Field(TeamType, id=graphene.String(required=True))
 
     @staticmethod
-    def resolve_team(_, info: graphene.ResolveInfo, pk):
+    def resolve_team(_, info: graphene.ResolveInfo, id):
         try:
-            return Team.objects.get(pk=pk)
+            return Team.objects.get(id=id)
         except Team.DoesNotExist:
             return None
 
@@ -146,38 +148,43 @@ class Queries(graphene.ObjectType):
     def resolve_teams(_, info: graphene.ResolveInfo, offset, limit):
         return Team.objects.all()[offset : offset + limit]
 
-    # race = relay.Node.Field(RaceType)
-    # races = DjangoFilterConnectionField(RaceType)
-    #
-    # race_day = relay.Node.Field(RaceDayType)
-    # race_days = DjangoFilterConnectionField(RaceDayType)
-    #
-    # race_team = relay.Node.Field(RaceTeamType)
-    # race_teams = DjangoFilterConnectionField(RaceTeamType)
-    #
-    # race_team_time = relay.Node.Field(RaceTeamTimeType)
-    # race_team_times = DjangoFilterConnectionField(RaceTeamTimeType)
-    #
-    # team = relay.Node.Field(TeamType)
-    # teams = DjangoFilterConnectionField(TeamType)
+    team_races = graphene.List(
+        RaceTeamType,
+        team_id=graphene.String(required=True),
+    )
+
+    @staticmethod
+    def resolve_team_races(_, info: graphene.ResolveInfo, team_id):
+        return RaceTeam.objects.filter(team=team_id)
 
 
-# class SaveRaceMutation(graphene.Mutation):
-#     class Arguments:
-#         id = graphene.ID()
-#         year = graphene.String(required=True)
-#         name = graphene.String(required=True)
-#
-#     race = graphene.Field(lambda: RaceType)
-#
-#     @classmethod
-#     def mutate(cls, root, info, **kwargs):
-#         saved_race, created = Race.objects.update_or_create(
-#             id=kwargs.pop("id", None), defaults=kwargs
-#         )
-#
-#         return SaveRaceMutation(race=saved_race)
+class SaveRaceMutation(graphene.Mutation):
+    class Arguments:
+        id = graphene.String()
+        year = graphene.String(required=True)
+        name = graphene.String(required=True)
+
+    race = graphene.Field(lambda: RaceType)
+
+    @classmethod
+    def mutate(cls, root, info, **kwargs):
+        user = info.context.user
+
+        if not user.is_staff:
+            raise GraphQLError("Only staff may perform this action.")
+
+        id = kwargs.pop("id", None)
+        year = kwargs.get("year")
+
+        try:
+            saved_race, created = Race.objects.update_or_create(id=id, defaults=kwargs)
+
+            return SaveRaceMutation(race=saved_race)
+        except IntegrityError:
+            raise GraphQLError(f"A race already exists for {year}")
+        except Exception as e:
+            raise GraphQLError(str(e))
 
 
-# class Mutations(graphene.ObjectType):
-#     save_race = SaveRaceMutation.Field()
+class Mutations(graphene.ObjectType):
+    save_race = SaveRaceMutation.Field()

@@ -2,9 +2,8 @@ import {GQL_CURRENT_USER_INFO, useUserContext} from "@/lib/userContext/userConte
 import {gql} from "@apollo/client"
 import {useMutation} from "@apollo/client/react"
 import {Button} from "@catalyst/button.tsx"
-import {ErrorMessage, Field, FieldGroup, Label} from "@catalyst/fieldset.tsx"
+import {ErrorMessage, Field, FieldGroup, Fieldset, Label} from "@catalyst/fieldset.tsx"
 import {Input} from "@catalyst/input.tsx"
-import {Fieldset} from "@headlessui/react"
 import {yupResolver} from "@hookform/resolvers/yup"
 import {type SubmitHandler, useForm} from "react-hook-form"
 import {useNavigate} from "react-router"
@@ -38,7 +37,7 @@ export const LoginPage = () => {
   const {setToken} = useUserContext()
   const navigate = useNavigate()
 
-  const [doLogin, {loading, error}] = useMutation<TokenAuthResponse>(LOGIN_MUTATION, {
+  const [doLogin, {loading: awaitingMutation, error}] = useMutation<TokenAuthResponse>(LOGIN_MUTATION, {
     refetchQueries: [GQL_CURRENT_USER_INFO],
   })
 
@@ -67,7 +66,7 @@ export const LoginPage = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="card w-96 shadow-lg">
+      <div className="card w-100 shadow-lg">
         <div className="card-body">
           <Fieldset>
             <FieldGroup>
@@ -83,7 +82,7 @@ export const LoginPage = () => {
                 {errors.password && <ErrorMessage>{errors.password.message}</ErrorMessage>}
               </Field>
 
-              <Button type="submit" disabled={loading}>
+              <Button type="submit" disabled={awaitingMutation}>
                 Login
               </Button>
 

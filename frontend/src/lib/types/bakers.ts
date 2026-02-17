@@ -1,7 +1,7 @@
 import type {User} from "@/lib/types/mopeds.ts"
 
 export type Race = {
-  id: number
+  id: string | null
   year: string
   name: string
 }

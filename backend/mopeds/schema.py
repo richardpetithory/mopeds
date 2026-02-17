@@ -15,7 +15,7 @@ class Query(
 
 
 class Mutation(
-    # bakers.schema.Mutations,
+    bakers.schema.Mutations,
     users.schema.Mutations,
     graphene.ObjectType,
 ):

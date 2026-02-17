@@ -1,27 +1,36 @@
-import type {RaceDay} from "@/lib/types/bakers.ts"
+import type {Race, RaceDay} from "@/lib/types/bakers.ts"
+import {useUserContext} from "@/lib/userContext/userContext.ts"
 import {gql} from "@apollo/client"
 import {useQuery} from "@apollo/client/react"
+import {Button} from "@catalyst/button.tsx"
+import {Heading} from "@catalyst/heading.tsx"
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@catalyst/table.tsx"
 import {Link, useParams} from "react-router"
 
-export interface RaceSummary {
+interface RaceSummary {
   teamId: number
   teamName: string
   totalDurationHours: string
 }
 
-export interface RaceDaysResponse {
+interface RaceDaysResponse {
+  race: Race
   raceDays: RaceDay[]
   raceSummary: RaceSummary[]
 }
 
-export const GQL_RACE_DAY_LIST = gql`
-  query Race($racePk: String!, $offset: Int, $limit: Int) {
-    raceDays(racePk: $racePk, offset: $offset, limit: $limit) {
+const GQL_RACE_DAY_LIST = gql`
+  query Race($raceId: String!, $offset: Int, $limit: Int) {
+    race(id: $raceId) {
+      id
+      year
+      name
+    }
+    raceDays(raceId: $raceId, offset: $offset, limit: $limit) {
       id
       day
     }
-    raceSummary(racePk: $racePk) {
+    raceSummary(raceId: $raceId) {
       teamId
       teamName
       totalDurationHours
@@ -30,55 +39,73 @@ export const GQL_RACE_DAY_LIST = gql`
 `
 
 export const RacePage = () => {
-  const {racePk} = useParams()
+  const {currentUser} = useUserContext()
+  const {raceId} = useParams()
 
   const {data, loading} = useQuery<RaceDaysResponse>(GQL_RACE_DAY_LIST, {
     variables: {
-      racePk: racePk,
+      raceId: raceId,
     },
   })
-
-  console.log(data)
 
   if (!data || loading) return null
 
   return (
-    <div className="flex flex-col gap-4">
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableHeader>Team</TableHeader>
-            <TableHeader>Total Time</TableHeader>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {data.raceSummary.map((summaryRecord) => {
-            return (
-              <TableRow key={summaryRecord.teamId}>
-                <TableCell className="font-medium">{summaryRecord.teamName}</TableCell>
-                <TableCell className="font-medium">{summaryRecord.totalDurationHours}</TableCell>
-              </TableRow>
-            )
-          })}
-        </TableBody>
-      </Table>
+    <>
+      <div className="flex w-full flex-wrap items-end justify-between gap-4 border-b border-zinc-950/10 pb-6 dark:border-white/10">
+        <Heading>Name: {data.race.name}</Heading>
+        <div className="flex gap-4">
+          {currentUser?.isStaff && (
+            <Link to={`/bakers/races/${data.race.id}/edit`}>
+              <Button>Edit</Button>
+            </Link>
+          )}
+        </div>
+      </div>
 
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableHeader>Day</TableHeader>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {data.raceDays.map((raceDay) => (
-            <TableRow key={raceDay.id}>
-              <TableCell className="font-medium">
-                <Link to={`${raceDay.day}`}>{raceDay.day}</Link>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+      <div className="card w-100 shadow-lg">
+        <div className="card-body">
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableHeader>Team</TableHeader>
+                <TableHeader>Total Time</TableHeader>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {data.raceSummary.map((summaryRecord) => {
+                return (
+                  <TableRow key={summaryRecord.teamId}>
+                    <TableCell className="font-medium">{summaryRecord.teamName}</TableCell>
+                    <TableCell className="font-medium">{summaryRecord.totalDurationHours}</TableCell>
+                  </TableRow>
+                )
+              })}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
+
+      <div className="card w-100 shadow-lg">
+        <div className="card-body">
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableHeader>Day</TableHeader>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {data.raceDays.map((raceDay) => (
+                <TableRow key={raceDay.id}>
+                  <TableCell className="font-medium">
+                    <Link to={`${raceDay.day}`}>Day {raceDay.day}</Link>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
+    </>
   )
 }

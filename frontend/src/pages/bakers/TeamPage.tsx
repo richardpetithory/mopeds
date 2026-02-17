@@ -1,15 +1,16 @@
-import type {Team} from "@/lib/types/bakers.ts"
+import type {RaceTeam, Team} from "@/lib/types/bakers.ts"
 import {gql} from "@apollo/client"
 import {useQuery} from "@apollo/client/react"
 import {useParams} from "react-router"
 
 export interface TeamResponse {
   team: Team
+  teamRaces: RaceTeam[]
 }
 
 export const GQL_TEAM_SUMMARY = gql`
-  query Team($pk: String!) {
-    team(pk: $pk) {
+  query Team($id: String!) {
+    team(id: $id) {
       id
       name
       raceteamSet {
@@ -19,25 +20,37 @@ export const GQL_TEAM_SUMMARY = gql`
         }
       }
     }
+    teamRaces(teamId: $id) {
+      team {
+        name
+      }
+      race {
+        name
+      }
+    }
   }
 `
 
 export const TeamPage = () => {
-  const {pk} = useParams()
+  const {id} = useParams()
 
   const {data, loading} = useQuery<TeamResponse>(GQL_TEAM_SUMMARY, {
-    variables: {
-      pk: pk,
-    },
+    variables: {id},
   })
 
   if (!data || loading) return null
 
-  const team = data.team
-
   return (
     <div>
-      <div>Name: {team.name}</div>
+      <div>
+        <div>Name: {data.team.name}</div>
+      </div>
+      <br />
+      <div>
+        {data.teamRaces.map((teamRace) => (
+          <div>Race: {teamRace.race.name}</div>
+        ))}
+      </div>
     </div>
   )
 }

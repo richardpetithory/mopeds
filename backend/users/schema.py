@@ -13,13 +13,13 @@ class UserType(DjangoObjectType):
 
 class Queries(graphene.ObjectType):
     current_user = graphene.Field(UserType)
-    user = graphene.Field(UserType, pk=graphene.String(required=True))
+    user = graphene.Field(UserType, id=graphene.String(required=True))
     users = graphene.List(UserType)
 
     @staticmethod
-    def resolve_user(_, info: graphene.ResolveInfo, pk):
+    def resolve_user(_, info: graphene.ResolveInfo, id):
         try:
-            return User.objects.get(pk=pk)
+            return User.objects.get(id=id)
         except User.DoesNotExist:
             return None
 

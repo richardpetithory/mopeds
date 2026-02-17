@@ -9,8 +9,8 @@ export interface RaceTeamTimesResponse {
 }
 
 export const GQL_RACE_TEAM_TIME_LIST = gql`
-  query RaceTeamTimes($racePk: String!, $raceDay: String!, $offset: Int, $limit: Int) {
-    raceTeamTimes(racePk: $racePk, raceDay: $raceDay, offset: $offset, limit: $limit) {
+  query RaceTeamTimes($raceId: String!, $raceDay: String!, $offset: Int, $limit: Int) {
+    raceTeamTimes(raceId: $raceId, raceDay: $raceDay, offset: $offset, limit: $limit) {
       id
       day {
         day
@@ -27,11 +27,11 @@ export const GQL_RACE_TEAM_TIME_LIST = gql`
 `
 
 export const RaceTeamTimesPage = () => {
-  const {racePk, day} = useParams()
+  const {raceId, day} = useParams()
 
   const {data, loading} = useQuery<RaceTeamTimesResponse>(GQL_RACE_TEAM_TIME_LIST, {
     variables: {
-      racePk: racePk,
+      raceId: raceId,
       raceDay: day,
     },
   })
