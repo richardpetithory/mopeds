@@ -20,8 +20,17 @@ class RaceTeamType(DjangoObjectType):
 
 
 class RaceTeamTimeType(DjangoObjectType):
+    duration_hours = graphene.Float()
+
     class Meta:
         model = RaceTeamTime
+        exclude_fields = ("duration",)
+
+    def resolve_duration_hours(self, info):
+        # self is the Asset instance
+        if self.duration:
+            return self.duration.total_seconds() / 3600  # Convert to hours
+        return None
 
 
 class TeamType(DjangoObjectType):

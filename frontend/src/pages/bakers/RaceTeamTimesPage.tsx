@@ -20,8 +20,7 @@ export const GQL_RACE_TEAM_TIME_LIST = gql`
           name
         }
       }
-      hours
-      minutes
+      durationHours
       dnf
     }
   }
@@ -44,7 +43,7 @@ export const RaceTeamTimesPage = () => {
       <TableHead>
         <TableRow>
           <TableHeader>Team</TableHeader>
-          <TableHeader>Hours</TableHeader>
+          <TableHeader>Minutes Total</TableHeader>
           <TableHeader>Minutes</TableHeader>
           <TableHeader>DNF</TableHeader>
         </TableRow>
@@ -53,8 +52,7 @@ export const RaceTeamTimesPage = () => {
         {data.raceTeamTimes.map((raceTeamTime: RaceTeamTime) => (
           <TableRow key={raceTeamTime.id}>
             <TableCell className="font-medium">{raceTeamTime.raceTeam.team.name}</TableCell>
-            <TableCell className="font-medium">{raceTeamTime.hours}</TableCell>
-            <TableCell className="font-medium">{raceTeamTime.minutes}</TableCell>
+            <TableCell className="font-medium">{raceTeamTime.durationHours}</TableCell>
             <TableCell className="font-medium">{raceTeamTime.dnf}</TableCell>
           </TableRow>
         ))}

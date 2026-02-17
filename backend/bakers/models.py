@@ -64,7 +64,7 @@ class RaceTeamTime(models.Model):
         verbose_name = _("Races time")
         verbose_name_plural = _("Races times")
         unique_together = [("day", "race_team")]
-        ordering = ["hours", "minutes"]
+        ordering = ["duration"]
 
     day = models.ForeignKey(
         to="RaceDay", on_delete=models.CASCADE, related_name="times"
@@ -72,9 +72,7 @@ class RaceTeamTime(models.Model):
 
     race_team = models.ForeignKey(to="RaceTeam", on_delete=models.CASCADE)
 
-    hours = models.IntegerField(_("Hours"), null=True, blank=True)
-
-    minutes = models.IntegerField(_("Minutes"), null=True, blank=True)
+    duration = models.DurationField(_("Minutes Total"), null=True, blank=True)
 
     dnf = models.BooleanField(_("DNF"), null=False, default=False)
 
@@ -83,7 +81,7 @@ class RaceTeamTime(models.Model):
         if self.dnf:
             return "DNF"
         else:
-            return f"{self.hours} hours {self.minutes} minutes"
+            return f"{self.duration}"
 
     def __str__(self):
         return f"Time for {self.race_team.team} on {self.day}: {self.result}"
