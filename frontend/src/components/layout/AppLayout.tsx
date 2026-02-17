@@ -78,8 +78,11 @@ export const AppLayout = () => {
 
           <SidebarBody>
             <SidebarSection>
-              <SidebarItem href="/bakers" current={pathname.startsWith("/bakers")}>
+              <SidebarItem href="/bakers" current={pathname.startsWith("/bakers/races")}>
                 <SidebarLabel>Races</SidebarLabel>
+              </SidebarItem>
+              <SidebarItem href="/bakers/teams" current={pathname.startsWith("/bakers/teams")}>
+                <SidebarLabel>Teams</SidebarLabel>
               </SidebarItem>
             </SidebarSection>
           </SidebarBody>

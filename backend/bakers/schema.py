@@ -1,5 +1,4 @@
 import graphene
-from graphene import relay
 from graphene_django import DjangoObjectType
 
 from .models import Race, RaceDay, RaceTeam, RaceTeamTime, Team, TeamMembership
@@ -13,43 +12,33 @@ class RaceType(DjangoObjectType):
 class RaceDayType(DjangoObjectType):
     class Meta:
         model = RaceDay
-        filter_fields = []
-        interfaces = (relay.Node,)
 
 
 class RaceTeamType(DjangoObjectType):
     class Meta:
         model = RaceTeam
-        filter_fields = ("race", "team")
-        interfaces = (relay.Node,)
 
 
 class RaceTeamTimeType(DjangoObjectType):
     class Meta:
         model = RaceTeamTime
-        filter_fields = []
-        interfaces = (relay.Node,)
 
 
 class TeamType(DjangoObjectType):
     class Meta:
         model = Team
-        filter_fields = []
-        interfaces = (relay.Node,)
 
-    logo = graphene.String()
-
-    def resolve_logo(self, info):
-        if self.logo:
-            return info.context.build_absolute_uri(self.logo.url)
-        return None
+    # logo = graphene.String()
+    #
+    # def resolve_logo(self, info):
+    #     if self.logo:
+    #         return info.context.build_absolute_uri(self.logo.url)
+    #     return None
 
 
 class TeamMembershipType(DjangoObjectType):
     class Meta:
         model = TeamMembership
-        filter_fields = []
-        interfaces = (relay.Node,)
 
 
 class Queries(graphene.ObjectType):
@@ -113,6 +102,24 @@ class Queries(graphene.ObjectType):
         return RaceTeamTime.objects.filter(day__race=race_pk, day__day=race_day)[
             offset : offset + limit
         ]
+
+    team = graphene.Field(TeamType, pk=graphene.String(required=True))
+    teams = graphene.List(
+        TeamType,
+        offset=graphene.Int(0),
+        limit=graphene.Int(10),
+    )
+
+    @staticmethod
+    def resolve_team(_, info: graphene.ResolveInfo, pk):
+        try:
+            return Team.objects.get(pk=pk)
+        except Team.DoesNotExist:
+            return None
+
+    @staticmethod
+    def resolve_teams(_, info: graphene.ResolveInfo, offset, limit):
+        return Team.objects.all()[offset : offset + limit]
 
     # race = relay.Node.Field(RaceType)
     # races = DjangoFilterConnectionField(RaceType)

@@ -17,7 +17,7 @@ export const GQL_RACE_DAY_LIST = gql`
   }
 `
 
-export const RaceDays = () => {
+export const RaceDaysPage = () => {
   const {racePk} = useParams()
 
   const {data, loading} = useQuery<RaceDaysResponse>(GQL_RACE_DAY_LIST, {

@@ -3,9 +3,11 @@ import {client} from "@/lib/apiClient.ts"
 import {UserContextProvider} from "@/lib/userContext/UserContextProvider.tsx"
 import {LoginPage} from "@/pages/auth/LoginPage.tsx"
 import {LogoutPage} from "@/pages/auth/LogoutPage.tsx"
-import {RaceDays} from "@/pages/bakers/races/RaceDays.tsx"
-import {Races} from "@/pages/bakers/races/Races.tsx"
-import {RaceTeamTimes} from "@/pages/bakers/races/RaceTeamTimes.tsx"
+import {RaceDaysPage} from "@/pages/bakers/RaceDaysPage.tsx"
+import {RacesPage} from "@/pages/bakers/RacesPage.tsx"
+import {RaceTeamTimesPage} from "@/pages/bakers/RaceTeamTimesPage.tsx"
+import {TeamPage} from "@/pages/bakers/TeamPage.tsx"
+import {TeamsPage} from "@/pages/bakers/TeamsPage.tsx"
 import {NotFoundPage} from "@/pages/NotFound.tsx"
 import {ApolloProvider} from "@apollo/client/react"
 import {StrictMode} from "react"
@@ -28,9 +30,11 @@ const routes: RouteObject[] = [
         path: "bakers",
         children: [
           {index: true, element: <Navigate to={"races"} />},
-          {path: "races", element: <Races />},
-          {path: "races/:racePk", element: <RaceDays />},
-          {path: "races/:racePk/:day", element: <RaceTeamTimes />},
+          {path: "races", element: <RacesPage />},
+          {path: "races/:racePk", element: <RaceDaysPage />},
+          {path: "races/:racePk/:day", element: <RaceTeamTimesPage />},
+          {path: "teams", element: <TeamsPage />},
+          {path: "teams/:pk", element: <TeamPage />},
         ],
       },
     ],

@@ -27,7 +27,7 @@ export const GQL_RACE_TEAM_TIME_LIST = gql`
   }
 `
 
-export const RaceTeamTimes = () => {
+export const RaceTeamTimesPage = () => {
   const {racePk, day} = useParams()
 
   const {data, loading} = useQuery<RaceTeamTimesResponse>(GQL_RACE_TEAM_TIME_LIST, {
