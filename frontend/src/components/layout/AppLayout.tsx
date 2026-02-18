@@ -53,7 +53,7 @@ export const AppLayout = () => {
               <Dropdown>
                 <DropdownButton as={SidebarItem}>
                   {/*<Avatar src="/teams/catalyst.svg" />*/}
-                  <SidebarLabel>Catalyst</SidebarLabel>
+                  <SidebarLabel>{currentUser?.name}</SidebarLabel>
                   <ChevronDownIcon />
                 </DropdownButton>
                 <DropdownMenu className="min-w-80 lg:min-w-64" anchor="bottom start">

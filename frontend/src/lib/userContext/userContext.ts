@@ -12,7 +12,7 @@ export interface CurrentUserInfo {
   lastLogin: string | null
 }
 
-export interface UserContext {
+interface UserContextInterface {
   token: string | null
   setToken: (token: string | null) => void
   currentUser: CurrentUserInfo | null
@@ -39,12 +39,12 @@ export const GQL_CURRENT_USER_INFO = gql`
   }
 `
 
-export const UserContext = createContext<UserContext>({
+export const UserContext = createContext<UserContextInterface>({
   token: null,
   setToken: () => {},
   currentUser: null,
 })
 
-export const useUserContext = (): UserContext => {
+export const useUserContext = (): UserContextInterface => {
   return useContext(UserContext)
 }

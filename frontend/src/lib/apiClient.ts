@@ -3,12 +3,14 @@ import {SetContextLink} from "@apollo/client/link/context"
 import {ErrorLink} from "@apollo/client/link/error"
 
 const authLink = new SetContextLink(({headers}) => {
-  const token = localStorage.getItem("token")
+  const token = window.localStorage.getItem("token")
+
+  const extraHeaders = token ? {Authorization: `JWT ${token.trim()}`} : {}
 
   return {
     headers: {
       ...headers,
-      Authorization: token ? `JWT ${token.trim()}` : "",
+      ...extraHeaders,
     },
   }
 })

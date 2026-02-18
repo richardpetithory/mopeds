@@ -1,5 +1,5 @@
 import {useLazyQuery} from "@apollo/client/react"
-import {type PropsWithChildren, useState} from "react"
+import {type PropsWithChildren, useEffect, useState} from "react"
 import {type CurrentUserInfo, type CurrentUserInfoResponse, GQL_CURRENT_USER_INFO, UserContext} from "./userContext.ts"
 
 export const UserContextProvider = ({children}: PropsWithChildren) => {
@@ -8,12 +8,20 @@ export const UserContextProvider = ({children}: PropsWithChildren) => {
 
   const [getCurrentUserQuery] = useLazyQuery<CurrentUserInfoResponse>(GQL_CURRENT_USER_INFO)
 
+  useEffect(() => {
+    getCurrentUserQuery({
+      context: {
+        headers: {
+          Authorization: `JWT ${token}`,
+        },
+      },
+    }).then((currentUserInfo) => {
+      setCurrentUser(currentUserInfo?.data?.currentUser || null)
+    })
+  }, [getCurrentUserQuery, token])
+
   const setToken = (newToken: string | null) => {
     if (newToken) {
-      getCurrentUserQuery().then((currentUserInfo) => {
-        setCurrentUser(currentUserInfo?.data?.currentUser || null)
-      })
-
       localStorage.setItem("token", newToken)
     } else {
       localStorage.removeItem("token")
