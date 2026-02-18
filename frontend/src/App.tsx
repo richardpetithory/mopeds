@@ -9,8 +9,10 @@ import {RacesPage} from "@/pages/bakers/RacesPage.tsx"
 import {RaceTeamTimesPage} from "@/pages/bakers/RaceTeamTimesPage.tsx"
 import {TeamPage} from "@/pages/bakers/TeamPage.tsx"
 import {TeamsPage} from "@/pages/bakers/TeamsPage.tsx"
-import {NotFoundPage} from "@/pages/NotFound.tsx"
+import {NotFoundPage} from "@/pages/NotFoundPage.tsx"
+import {mantineTheme} from "@/theme.ts"
 import {ApolloProvider} from "@apollo/client/react"
+import {MantineProvider} from "@mantine/core"
 import {StrictMode} from "react"
 import {createBrowserRouter, Navigate, type RouteObject, RouterProvider} from "react-router"
 
@@ -48,9 +50,11 @@ export const App = () => {
   return (
     <StrictMode>
       <ApolloProvider client={client}>
-        <UserContextProvider>
-          <RouterProvider router={createBrowserRouter(routes)} />
-        </UserContextProvider>
+        <MantineProvider theme={mantineTheme} defaultColorScheme="dark">
+          <UserContextProvider>
+            <RouterProvider router={createBrowserRouter(routes)} />
+          </UserContextProvider>
+        </MantineProvider>
       </ApolloProvider>
     </StrictMode>
   )

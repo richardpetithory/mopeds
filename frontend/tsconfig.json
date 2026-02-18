@@ -10,8 +10,7 @@
 
     /* Import aliases */
     "paths": {
-      "@/*": ["./src/*"],
-      "@catalyst/*": ["./catalyst/*"]
+      "@/*": ["./src/*"]
     },
 
     /* Bundler mode */

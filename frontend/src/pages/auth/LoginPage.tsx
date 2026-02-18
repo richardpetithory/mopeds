@@ -1,9 +1,6 @@
 import {GQL_CURRENT_USER_INFO, useUserContext} from "@/lib/userContext/userContext.ts"
 import {gql} from "@apollo/client"
 import {useMutation} from "@apollo/client/react"
-import {Button} from "@catalyst/button.tsx"
-import {ErrorMessage, Field, FieldGroup, Fieldset, Label} from "@catalyst/fieldset.tsx"
-import {Input} from "@catalyst/input.tsx"
 import {yupResolver} from "@hookform/resolvers/yup"
 import {type SubmitHandler, useForm} from "react-hook-form"
 import {useNavigate} from "react-router"
@@ -66,35 +63,35 @@ export const LoginPage = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="card w-100 shadow-lg">
-        <div className="card-body">
-          <Fieldset>
-            <FieldGroup>
-              <Field>
-                <Label>Email</Label>
-                <Input {...register("email")} autoFocus={true} />
-                {errors.email && <ErrorMessage>{errors.email.message}</ErrorMessage>}
-              </Field>
+      {/*<div className="card w-100 shadow-lg">*/}
+      {/*  <div className="card-body">*/}
+      {/*    <Fieldset>*/}
+      {/*      <FieldGroup>*/}
+      {/*        <Field>*/}
+      {/*          <Label>Email</Label>*/}
+      {/*          <Input {...register("email")} autoFocus={true} />*/}
+      {/*          {errors.email && <ErrorMessage>{errors.email.message}</ErrorMessage>}*/}
+      {/*        </Field>*/}
 
-              <Field>
-                <Label>Password</Label>
-                <Input type={"password"} {...register("password")} />
-                {errors.password && <ErrorMessage>{errors.password.message}</ErrorMessage>}
-              </Field>
+      {/*        <Field>*/}
+      {/*          <Label>Password</Label>*/}
+      {/*          <Input type={"password"} {...register("password")} />*/}
+      {/*          {errors.password && <ErrorMessage>{errors.password.message}</ErrorMessage>}*/}
+      {/*        </Field>*/}
 
-              <Button type="submit" disabled={awaitingMutation}>
-                Login
-              </Button>
+      {/*        <Button type="submit" disabled={awaitingMutation}>*/}
+      {/*          Login*/}
+      {/*        </Button>*/}
 
-              {error && (
-                <div className="alert alert-error" role="alert">
-                  {error.message}
-                </div>
-              )}
-            </FieldGroup>
-          </Fieldset>
-        </div>
-      </div>
+      {/*        {error && (*/}
+      {/*          <div className="alert alert-error" role="alert">*/}
+      {/*            {error.message}*/}
+      {/*          </div>*/}
+      {/*        )}*/}
+      {/*      </FieldGroup>*/}
+      {/*    </Fieldset>*/}
+      {/*  </div>*/}
+      {/*</div>*/}
     </form>
   )
 }

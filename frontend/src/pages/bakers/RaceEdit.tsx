@@ -1,9 +1,6 @@
 import type {Race} from "@/lib/types/bakers.ts"
 import {gql} from "@apollo/client"
 import {useMutation, useQuery} from "@apollo/client/react"
-import {Button} from "@catalyst/button.tsx"
-import {ErrorMessage, Field, FieldGroup, Fieldset, Label} from "@catalyst/fieldset.tsx"
-import {Input} from "@catalyst/input.tsx"
 import {yupResolver} from "@hookform/resolvers/yup"
 import {useEffect} from "react"
 import {type SubmitHandler, useForm} from "react-hook-form"
@@ -92,35 +89,35 @@ export const RaceEdit = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="card w-96 shadow-lg">
-        <div className="card-body">
-          <Fieldset>
-            <FieldGroup>
-              <Field>
-                <Label>Year</Label>
-                <Input {...register("year")} autoFocus={true} />
-                {errors.year && <ErrorMessage>{errors.year.message}</ErrorMessage>}
-              </Field>
+      {/*<div className="card w-96 shadow-lg">*/}
+      {/*  <div className="card-body">*/}
+      {/*    <Fieldset>*/}
+      {/*      <FieldGroup>*/}
+      {/*        <Field>*/}
+      {/*          <Label>Year</Label>*/}
+      {/*          <Input {...register("year")} autoFocus={true} />*/}
+      {/*          {errors.year && <ErrorMessage>{errors.year.message}</ErrorMessage>}*/}
+      {/*        </Field>*/}
 
-              <Field>
-                <Label>Name</Label>
-                <Input {...register("name")} />
-                {errors.name && <ErrorMessage>{errors.name.message}</ErrorMessage>}
-              </Field>
+      {/*        <Field>*/}
+      {/*          <Label>Name</Label>*/}
+      {/*          <Input {...register("name")} />*/}
+      {/*          {errors.name && <ErrorMessage>{errors.name.message}</ErrorMessage>}*/}
+      {/*        </Field>*/}
 
-              <Button type="submit" disabled={awaitingMutation}>
-                Save
-              </Button>
+      {/*        <Button type="submit" disabled={awaitingMutation}>*/}
+      {/*          Save*/}
+      {/*        </Button>*/}
 
-              {error && (
-                <div className="alert alert-error" role="alert">
-                  {error.message}
-                </div>
-              )}
-            </FieldGroup>
-          </Fieldset>
-        </div>
-      </div>
+      {/*        {error && (*/}
+      {/*          <div className="alert alert-error" role="alert">*/}
+      {/*            {error.message}*/}
+      {/*          </div>*/}
+      {/*        )}*/}
+      {/*      </FieldGroup>*/}
+      {/*    </Fieldset>*/}
+      {/*  </div>*/}
+      {/*</div>*/}
     </form>
   )
 }

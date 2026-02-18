@@ -1,7 +1,6 @@
 import type {RaceTeamTime} from "@/lib/types/bakers.ts"
 import {gql} from "@apollo/client"
 import {useQuery} from "@apollo/client/react"
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@catalyst/table.tsx"
 import {useParams} from "react-router"
 
 export interface RaceTeamTimesResponse {
@@ -39,24 +38,25 @@ export const RaceTeamTimesPage = () => {
   if (!data || loading) return null
 
   return (
-    <Table>
-      <TableHead>
-        <TableRow>
-          <TableHeader>Team</TableHeader>
-          <TableHeader>Minutes Total</TableHeader>
-          <TableHeader>Minutes</TableHeader>
-          <TableHeader>DNF</TableHeader>
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {data.raceTeamTimes.map((raceTeamTime: RaceTeamTime) => (
-          <TableRow key={raceTeamTime.id}>
-            <TableCell className="font-medium">{raceTeamTime.raceTeam.team.name}</TableCell>
-            <TableCell className="font-medium">{raceTeamTime.duration}</TableCell>
-            <TableCell className="font-medium">{raceTeamTime.dnf}</TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+    <>sdf</>
+    // <Table>
+    //   <TableHead>
+    //     <TableRow>
+    //       <TableHeader>Team</TableHeader>
+    //       <TableHeader>Minutes Total</TableHeader>
+    //       <TableHeader>Minutes</TableHeader>
+    //       <TableHeader>DNF</TableHeader>
+    //     </TableRow>
+    //   </TableHead>
+    //   <TableBody>
+    //     {data.raceTeamTimes.map((raceTeamTime: RaceTeamTime) => (
+    //       <TableRow key={raceTeamTime.id}>
+    //         <TableCell className="font-medium">{raceTeamTime.raceTeam.team.name}</TableCell>
+    //         <TableCell className="font-medium">{raceTeamTime.duration}</TableCell>
+    //         <TableCell className="font-medium">{raceTeamTime.dnf}</TableCell>
+    //       </TableRow>
+    //     ))}
+    //   </TableBody>
+    // </Table>
   )
 }

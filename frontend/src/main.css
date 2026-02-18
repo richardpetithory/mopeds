@@ -1,10 +1,1 @@
-@import "tailwindcss";
-
-/*@plugin "daisyui";*/
-
-@plugin "daisyui" {
-  themes:
-    light --default,
-    dark --prefersdark,
-    business;
-}
+@import "@mantine/core/styles.css";
