@@ -33,8 +33,6 @@ export const GQL_CURRENT_USER_INFO = gql`
       isStaff
       isSuperuser
       lastLogin
-      #      memberships
-      #      teamSet
     }
   }
 `

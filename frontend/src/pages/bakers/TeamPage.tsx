@@ -1,7 +1,9 @@
+import {PageHeader} from "@/components/PageHeader/PageHeader.tsx"
 import type {RaceTeam, Team} from "@/lib/types/bakers.ts"
 import {gql} from "@apollo/client"
 import {useQuery} from "@apollo/client/react"
-import {useParams} from "react-router"
+import {Button, Center, Loader, Table} from "@mantine/core"
+import {Link, useParams} from "react-router"
 
 export interface TeamResponse {
   team: Team
@@ -13,18 +15,14 @@ export const GQL_TEAM_SUMMARY = gql`
     team(id: $id) {
       id
       name
-      raceteamSet {
-        id
-        race {
-          name
-        }
-      }
     }
     teamRaces(teamId: $id) {
       team {
         name
       }
       race {
+        id
+        year
         name
       }
     }
@@ -32,25 +30,48 @@ export const GQL_TEAM_SUMMARY = gql`
 `
 
 export const TeamPage = () => {
-  const {id} = useParams()
+  const {teamId} = useParams()
 
-  const {data, loading} = useQuery<TeamResponse>(GQL_TEAM_SUMMARY, {
-    variables: {id},
+  const {data} = useQuery<TeamResponse>(GQL_TEAM_SUMMARY, {
+    variables: {id: teamId},
   })
 
-  if (!data || loading) return null
+  if (!data)
+    return (
+      <Center>
+        <Loader />
+      </Center>
+    )
 
   return (
-    <div>
-      <div>
-        <div>Name: {data.team.name}</div>
-      </div>
-      <br />
-      <div>
-        {data.teamRaces.map((teamRace) => (
-          <div>Race: {teamRace.race.name}</div>
-        ))}
-      </div>
-    </div>
+    <>
+      <PageHeader
+        breadCrumbs={[{label: "Teams", to: "/teams"}, {label: data.team.name}]}
+        staffActions={
+          <Link to={`/teams/${data.team.id}/edit`}>
+            <Button>Edit</Button>
+          </Link>
+        }
+      />
+
+      <Table className="fit-content">
+        <Table.Thead>
+          <Table.Tr>
+            <Table.Th>Race</Table.Th>
+          </Table.Tr>
+        </Table.Thead>
+        <Table.Tbody>
+          {data.teamRaces.map((teamRace) => (
+            <Table.Tr key={teamRace.race.id}>
+              <Table.Td className="font-medium">
+                <Link to={`/bakers/races/${teamRace.race.id}`}>
+                  {teamRace.race.year} - {teamRace.race.name}
+                </Link>
+              </Table.Td>
+            </Table.Tr>
+          ))}
+        </Table.Tbody>
+      </Table>
+    </>
   )
 }

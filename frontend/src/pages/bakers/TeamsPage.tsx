@@ -1,6 +1,9 @@
+import {PageHeader} from "@/components/PageHeader/PageHeader.tsx"
 import type {Team} from "@/lib/types/bakers.ts"
 import {gql} from "@apollo/client"
 import {useQuery} from "@apollo/client/react"
+import {Button, Center, Loader, Table} from "@mantine/core"
+import {Link} from "react-router"
 
 export interface TeamsResponse {
   teams: Team[]
@@ -16,27 +19,42 @@ export const GQL_TEAMS_LIST = gql`
 `
 
 export const TeamsPage = () => {
-  const {data, loading} = useQuery<TeamsResponse>(GQL_TEAMS_LIST)
+  const {data} = useQuery<TeamsResponse>(GQL_TEAMS_LIST)
 
-  if (!data || loading) return null
+  if (!data)
+    return (
+      <Center>
+        <Loader />
+      </Center>
+    )
 
   return (
-    <>sdf</>
-    // <Table>
-    //   <TableHead>
-    //     <TableRow>
-    //       <TableHeader>Name</TableHeader>
-    //     </TableRow>
-    //   </TableHead>
-    //   <TableBody>
-    //     {data.teams.map((team) => (
-    //       <TableRow key={team.id}>
-    //         <TableCell className="font-medium">
-    //           <Link to={`${team.id}`}>{team.name}</Link>
-    //         </TableCell>
-    //       </TableRow>
-    //     ))}
-    //   </TableBody>
-    // </Table>
+    <>
+      <PageHeader
+        breadCrumbs={[{label: "Bakers", to: "/bakers"}, {label: "Teams"}]}
+        staffActions={
+          <Link to={`/bakers/teams/new`}>
+            <Button>New</Button>
+          </Link>
+        }
+      />
+
+      <Table className="fit-content">
+        <Table.Thead>
+          <Table.Tr>
+            <Table.Th>Team</Table.Th>
+          </Table.Tr>
+        </Table.Thead>
+        <Table.Tbody>
+          {data.teams.map((team) => (
+            <Table.Tr key={team.id}>
+              <Table.Td className="font-medium">
+                <Link to={`/bakers/teams/${team.id}`}>{team.name}</Link>
+              </Table.Td>
+            </Table.Tr>
+          ))}
+        </Table.Tbody>
+      </Table>
+    </>
   )
 }

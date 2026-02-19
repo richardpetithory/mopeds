@@ -2,6 +2,7 @@ import {GQL_CURRENT_USER_INFO, useUserContext} from "@/lib/userContext/userConte
 import {gql} from "@apollo/client"
 import {useMutation} from "@apollo/client/react"
 import {yupResolver} from "@hookform/resolvers/yup"
+import {Alert, Button, Group, TextInput} from "@mantine/core"
 import {type SubmitHandler, useForm} from "react-hook-form"
 import {useNavigate} from "react-router"
 import * as yup from "yup"
@@ -63,35 +64,23 @@ export const LoginPage = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      {/*<div className="card w-100 shadow-lg">*/}
-      {/*  <div className="card-body">*/}
-      {/*    <Fieldset>*/}
-      {/*      <FieldGroup>*/}
-      {/*        <Field>*/}
-      {/*          <Label>Email</Label>*/}
-      {/*          <Input {...register("email")} autoFocus={true} />*/}
-      {/*          {errors.email && <ErrorMessage>{errors.email.message}</ErrorMessage>}*/}
-      {/*        </Field>*/}
+      <Group>
+        <TextInput label={"Email"} {...register("email")} autoFocus={true} error={errors?.email?.message} />
+      </Group>
+      <Group>
+        <TextInput label={"Password"} {...register("password")} type={"password"} error={errors?.password?.message} />
+      </Group>
+      <Group>
+        <Button type={"submit"} disabled={awaitingMutation}>
+          Log In
+        </Button>
+      </Group>
 
-      {/*        <Field>*/}
-      {/*          <Label>Password</Label>*/}
-      {/*          <Input type={"password"} {...register("password")} />*/}
-      {/*          {errors.password && <ErrorMessage>{errors.password.message}</ErrorMessage>}*/}
-      {/*        </Field>*/}
-
-      {/*        <Button type="submit" disabled={awaitingMutation}>*/}
-      {/*          Login*/}
-      {/*        </Button>*/}
-
-      {/*        {error && (*/}
-      {/*          <div className="alert alert-error" role="alert">*/}
-      {/*            {error.message}*/}
-      {/*          </div>*/}
-      {/*        )}*/}
-      {/*      </FieldGroup>*/}
-      {/*    </Fieldset>*/}
-      {/*  </div>*/}
-      {/*</div>*/}
+      {error && (
+        <Alert variant={"filled"} color={"red"} className={"fit-content"}>
+          {error.message}
+        </Alert>
+      )}
     </form>
   )
 }

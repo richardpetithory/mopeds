@@ -9,15 +9,17 @@ export const UserContextProvider = ({children}: PropsWithChildren) => {
   const [getCurrentUserQuery] = useLazyQuery<CurrentUserInfoResponse>(GQL_CURRENT_USER_INFO)
 
   useEffect(() => {
-    getCurrentUserQuery({
-      context: {
-        headers: {
-          Authorization: `JWT ${token}`,
+    if (token) {
+      getCurrentUserQuery({
+        context: {
+          headers: {
+            Authorization: `JWT ${token}`,
+          },
         },
-      },
-    }).then((currentUserInfo) => {
-      setCurrentUser(currentUserInfo?.data?.currentUser || null)
-    })
+      }).then((currentUserInfo) => {
+        setCurrentUser(currentUserInfo?.data?.currentUser || null)
+      })
+    }
   }, [getCurrentUserQuery, token])
 
   const setToken = (newToken: string | null) => {

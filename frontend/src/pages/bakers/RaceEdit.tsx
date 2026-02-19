@@ -2,6 +2,7 @@ import type {Race} from "@/lib/types/bakers.ts"
 import {gql} from "@apollo/client"
 import {useMutation, useQuery} from "@apollo/client/react"
 import {yupResolver} from "@hookform/resolvers/yup"
+import {Alert, Button, Group, TextInput} from "@mantine/core"
 import {useEffect} from "react"
 import {type SubmitHandler, useForm} from "react-hook-form"
 import {useNavigate, useParams} from "react-router"
@@ -89,35 +90,23 @@ export const RaceEdit = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      {/*<div className="card w-96 shadow-lg">*/}
-      {/*  <div className="card-body">*/}
-      {/*    <Fieldset>*/}
-      {/*      <FieldGroup>*/}
-      {/*        <Field>*/}
-      {/*          <Label>Year</Label>*/}
-      {/*          <Input {...register("year")} autoFocus={true} />*/}
-      {/*          {errors.year && <ErrorMessage>{errors.year.message}</ErrorMessage>}*/}
-      {/*        </Field>*/}
+      <Group>
+        <TextInput label={"Year"} {...register("year")} autoFocus={true} error={errors?.year?.message} />
+      </Group>
+      <Group>
+        <TextInput label={"Name"} {...register("name")} error={errors?.name?.message} />
+      </Group>
+      <Group>
+        <Button type={"submit"} disabled={awaitingMutation}>
+          Save
+        </Button>
+      </Group>
 
-      {/*        <Field>*/}
-      {/*          <Label>Name</Label>*/}
-      {/*          <Input {...register("name")} />*/}
-      {/*          {errors.name && <ErrorMessage>{errors.name.message}</ErrorMessage>}*/}
-      {/*        </Field>*/}
-
-      {/*        <Button type="submit" disabled={awaitingMutation}>*/}
-      {/*          Save*/}
-      {/*        </Button>*/}
-
-      {/*        {error && (*/}
-      {/*          <div className="alert alert-error" role="alert">*/}
-      {/*            {error.message}*/}
-      {/*          </div>*/}
-      {/*        )}*/}
-      {/*      </FieldGroup>*/}
-      {/*    </Fieldset>*/}
-      {/*  </div>*/}
-      {/*</div>*/}
+      {error && (
+        <Alert variant={"filled"} color={"red"} className={"fit-content"}>
+          {error.message}
+        </Alert>
+      )}
     </form>
   )
 }

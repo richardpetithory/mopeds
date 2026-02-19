@@ -1,14 +1,22 @@
-import type {RaceTeamTime} from "@/lib/types/bakers.ts"
+import {PageHeader} from "@/components/PageHeader/PageHeader.tsx"
+import type {Race, RaceTeamTime} from "@/lib/types/bakers.ts"
 import {gql} from "@apollo/client"
 import {useQuery} from "@apollo/client/react"
-import {useParams} from "react-router"
+import {Center, Loader, Table} from "@mantine/core"
+import {Link, useParams} from "react-router"
 
 export interface RaceTeamTimesResponse {
+  race: Race
   raceTeamTimes: RaceTeamTime[]
 }
 
 export const GQL_RACE_TEAM_TIME_LIST = gql`
   query RaceTeamTimes($raceId: String!, $raceDay: String!, $offset: Int, $limit: Int) {
+    race(id: $raceId) {
+      id
+      year
+      name
+    }
     raceTeamTimes(raceId: $raceId, raceDay: $raceDay, offset: $offset, limit: $limit) {
       id
       day {
@@ -16,6 +24,7 @@ export const GQL_RACE_TEAM_TIME_LIST = gql`
       }
       raceTeam {
         team {
+          id
           name
         }
       }
@@ -28,35 +37,50 @@ export const GQL_RACE_TEAM_TIME_LIST = gql`
 export const RaceTeamTimesPage = () => {
   const {raceId, day} = useParams()
 
-  const {data, loading} = useQuery<RaceTeamTimesResponse>(GQL_RACE_TEAM_TIME_LIST, {
+  const {data} = useQuery<RaceTeamTimesResponse>(GQL_RACE_TEAM_TIME_LIST, {
     variables: {
       raceId: raceId,
       raceDay: day,
     },
   })
 
-  if (!data || loading) return null
+  if (!data)
+    return (
+      <Center>
+        <Loader />
+      </Center>
+    )
 
   return (
-    <>sdf</>
-    // <Table>
-    //   <TableHead>
-    //     <TableRow>
-    //       <TableHeader>Team</TableHeader>
-    //       <TableHeader>Minutes Total</TableHeader>
-    //       <TableHeader>Minutes</TableHeader>
-    //       <TableHeader>DNF</TableHeader>
-    //     </TableRow>
-    //   </TableHead>
-    //   <TableBody>
-    //     {data.raceTeamTimes.map((raceTeamTime: RaceTeamTime) => (
-    //       <TableRow key={raceTeamTime.id}>
-    //         <TableCell className="font-medium">{raceTeamTime.raceTeam.team.name}</TableCell>
-    //         <TableCell className="font-medium">{raceTeamTime.duration}</TableCell>
-    //         <TableCell className="font-medium">{raceTeamTime.dnf}</TableCell>
-    //       </TableRow>
-    //     ))}
-    //   </TableBody>
-    // </Table>
+    <>
+      <PageHeader
+        breadCrumbs={[
+          {label: "Bakers", to: "/bakers"},
+          {label: `${data.race.year} - ${data.race.name}`, to: `/bakers/races/${data.race.id}`},
+          {label: `Day ${day}`},
+        ]}
+      />
+
+      <Table className="fit-content">
+        <Table.Thead>
+          <Table.Tr>
+            <Table.Th>Team</Table.Th>
+            <Table.Th>Total Time</Table.Th>
+            <Table.Th>DNF</Table.Th>
+          </Table.Tr>
+        </Table.Thead>
+        <Table.Tbody>
+          {data.raceTeamTimes.map((raceTeamTime: RaceTeamTime) => (
+            <Table.Tr key={raceTeamTime.id}>
+              <Table.Td>
+                <Link to={`/bakers/teams/${raceTeamTime.raceTeam.team.id}`}>{raceTeamTime.raceTeam.team.name}</Link>
+              </Table.Td>
+              <Table.Td>{raceTeamTime.duration}</Table.Td>
+              <Table.Td>{raceTeamTime.dnf}</Table.Td>
+            </Table.Tr>
+          ))}
+        </Table.Tbody>
+      </Table>
+    </>
   )
 }
