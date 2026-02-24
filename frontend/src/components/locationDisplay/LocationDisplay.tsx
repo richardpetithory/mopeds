@@ -17,14 +17,14 @@ export const LocationDisplay = ({address, addressCoordinates, location, classNam
 
   return (
     <div className={cx("flex gap-2 items-center", className)}>
-      <HoverCard width={280} shadow="md" openDelay={300}>
+      <HoverCard shadow="md" openDelay={300} initiallyOpened={true}>
         <HoverCard.Target>
-          <div role={"button"} className={"underline cursor-pointer"}>
+          <div role={"button"} className={"underline cursor-pointer text-nowrap"}>
             {location}
           </div>
         </HoverCard.Target>
         <HoverCard.Dropdown>
-          <div className={"flex gap-2 items-center text-xl"}>
+          <div className={"flex gap-2 items-center"}>
             <div className={"whitespace-pre"}>{address}</div>
             <div className={"m-auto"} />
             <Button
@@ -37,12 +37,7 @@ export const LocationDisplay = ({address, addressCoordinates, location, classNam
                 })
               }}
             >
-              <FaRegCopy
-                style={{
-                  width: "20px",
-                  height: "20px",
-                }}
-              />
+              <FaRegCopy size={20} />
             </Button>
           </div>
         </HoverCard.Dropdown>
