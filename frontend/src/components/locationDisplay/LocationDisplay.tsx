@@ -17,7 +17,7 @@ export const LocationDisplay = ({address, addressCoordinates, location, classNam
 
   return (
     <div className={cx("flex gap-2 items-center", className)}>
-      <HoverCard shadow="md" openDelay={300} initiallyOpened={true}>
+      <HoverCard shadow="md" openDelay={300}>
         <HoverCard.Target>
           <div role={"button"} className={"underline cursor-pointer text-nowrap"}>
             {location}

@@ -128,13 +128,13 @@ export const RacePage = () => {
             <Table.Tbody>
               {data.raceDays.map((raceDay, index) => (
                 <Table.Tr key={raceDay.id}>
-                  <Table.Td>
+                  <Table.Td className="align-top">
                     <Link to={`/bakers/races/${raceId}/${raceDay.id}`}>Day {index + 1}</Link>
                   </Table.Td>
-                  <Table.Td>
+                  <Table.Td className="align-top">
                     <RaceDayStartingDisplay raceDay={raceDay} />
                   </Table.Td>
-                  <Table.Td>
+                  <Table.Td className="align-top">
                     <RaceDayFinishingDisplay raceDay={raceDay} />
                   </Table.Td>
                   <Table.Td className={"whitespace-pre"}>{raceDay.description}</Table.Td>
