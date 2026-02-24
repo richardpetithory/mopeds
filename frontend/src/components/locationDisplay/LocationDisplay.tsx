@@ -15,14 +15,18 @@ interface LocationDisplayProps extends PropsWithClassName {
 export const LocationDisplay = ({address, addressCoordinates, location, className}: LocationDisplayProps) => {
   const clipboard = useClipboard({timeout: 500})
 
+  const display = (
+    <div {...(address ? {role: "button"} : {})} className={"underline cursor-pointer text-nowrap"}>
+      {location}
+    </div>
+  )
+
+  if (!address) return display
+
   return (
     <div className={cx("flex gap-2 items-center", className)}>
       <HoverCard shadow="md" openDelay={300}>
-        <HoverCard.Target>
-          <div role={"button"} className={"underline cursor-pointer text-nowrap"}>
-            {location}
-          </div>
-        </HoverCard.Target>
+        <HoverCard.Target>{display}</HoverCard.Target>
         <HoverCard.Dropdown>
           <div className={"flex gap-2 items-center"}>
             <div className={"whitespace-pre"}>{address}</div>

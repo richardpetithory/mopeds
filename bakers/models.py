@@ -21,6 +21,26 @@ class Race(models.Model):
 
     description = models.TextField(_("Description"), blank=True, null=False, default="")
 
+    starting_address = models.TextField(
+        _("Starting Line Address"), blank=True, null=False, default=""
+    )
+
+    starting_address_coordinates = models.CharField(
+        _("Starting line location longitude and lattitude"),
+        max_length=100,
+        blank=True,
+        null=False,
+        default="",
+    )
+
+    starting_location = models.CharField(
+        _("Starting Line Short Name"),
+        max_length=50,
+        blank=True,
+        null=False,
+        default="",
+    )
+
     def __str__(self):
         return f"{self.year}"
 
@@ -36,17 +56,33 @@ class RaceDay(models.Model):
         unique_together = [("race", "day_number")]
         ordering = ["day_number"]
 
+    previous_day = models.ForeignKey(
+        "self",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="next_day",
+    )
+
     race = models.ForeignKey(to="Race", on_delete=models.CASCADE, related_name="days")
 
     day_number = models.IntegerField(_("Day #"), null=True, blank=False)
 
     description = models.TextField(_("Description"), blank=True, null=False, default="")
 
+    day_off = models.BooleanField(_("Day off"), null=False, default=False)
+
     starting_datetime = models.DateTimeField(
         _("Starting Date & Time"),
         blank=True,
         null=False,
         default=timezone.now().replace(hour=10, minute=0, second=0, microsecond=0),
+    )
+
+    starting_is_previous_finish = models.BooleanField(
+        _("Starting line is the same as previous day finish line"),
+        null=False,
+        default=False,
     )
 
     starting_address = models.TextField(

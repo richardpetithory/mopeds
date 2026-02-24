@@ -35,6 +35,9 @@ export const RaceEdit = () => {
       year: Number(format(new Date(), "yyyy")),
       name: "",
       description: "",
+      startingAddress: "Pee Pee Island, Newfoundland and Labrador, Canada",
+      startingAddressCoordinates: "47.191657,-52.837253",
+      startingLocation: "Pee Pee Island",
     },
     validate: {
       year: (value) => {
@@ -75,6 +78,24 @@ export const RaceEdit = () => {
       </Group>
       <Group>
         <Textarea label={"Description"} {...getInputProps("description")} rows={10} className={"w-100"} />
+      </Group>
+      <Group>
+        <Textarea label={"Starting Address"} {...getInputProps("startingAddress")} rows={3} className={"w-100"} />
+      </Group>
+      <Group>
+        <TextInput
+          label={"Starting Address Coordinates"}
+          {...getInputProps("startingAddressCoordinates")}
+          className={"w-100"}
+        />
+      </Group>
+      <Group className={"pb-0"}>
+        <TextInput
+          label={"Starting Location"}
+          {...getInputProps("startingLocation")}
+          className={"w-100"}
+          description={"Short display name of the address"}
+        />
       </Group>
       <Group>
         <Button type={"submit"} disabled={awaitingMutation}>

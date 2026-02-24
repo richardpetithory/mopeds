@@ -103,10 +103,10 @@ export const RaceDayPage = () => {
         <div>{formatDatetime(data.raceDay.startingDatetime)}</div>
 
         <div>Starting:</div>
-        <RaceDayStartingDisplay raceDay={data.raceDay} />
+        <RaceDayStartingDisplay locationValues={data.raceDay} />
 
         <div>Finishing:</div>
-        <RaceDayFinishingDisplay raceDay={data.raceDay} />
+        <RaceDayFinishingDisplay locationValues={data.raceDay} />
       </SimpleGrid>
 
       <Table className="fit-content">

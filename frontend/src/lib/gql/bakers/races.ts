@@ -23,16 +23,38 @@ export interface SaveRaceInput {
   year: number
   name: string
   description?: string
+  startingAddress: string
+  startingAddressCoordinates: string
+  startingLocation: string
 }
 
 export const GQL_RACE_MUTATION_SAVE = gql`
-  mutation SaveRace($id: String, $year: Int!, $name: String!, $description: String) {
-    saveRace(id: $id, year: $year, name: $name, description: $description) {
+  mutation SaveRace(
+    $id: String
+    $year: Int!
+    $name: String!
+    $description: String
+    $startingAddress: String
+    $startingAddressCoordinates: String
+    $startingLocation: String
+  ) {
+    saveRace(
+      id: $id
+      year: $year
+      name: $name
+      description: $description
+      startingAddress: $startingAddress
+      startingAddressCoordinates: $startingAddressCoordinates
+      startingLocation: $startingLocation
+    ) {
       race {
         id
         year
         name
         description
+        startingAddress
+        startingAddressCoordinates
+        startingLocation
       }
     }
   }
@@ -82,11 +104,28 @@ export const GQL_RACE_SUMMARY = gql`
       year
       name
       description
+      startingAddress
+      startingAddressCoordinates
+      startingLocation
     }
     raceDays(raceId: $id) {
       id
+      previousDay {
+        id
+        finishingAddress
+        finishingAddressCoordinates
+        finishingLocation
+      }
+      nextDay {
+        id
+        finishingAddress
+        finishingAddressCoordinates
+        finishingLocation
+      }
       dayNumber
       description
+      dayOff
+      startingIsPreviousFinish
       startingAddress
       startingAddressCoordinates
       startingLocation
@@ -116,35 +155,14 @@ export interface RaceSummaryResponse {
 
 // ----------------------------------------------------------------------------
 
-export const GQL_RACE_DAY = gql`
-  query RaceDay($id: String!) {
-    raceDay(id: $id) {
-      id
-      dayNumber
-      description
-      startingDatetime
-      startingAddress
-      startingAddressCoordinates
-      startingLocation
-      finishingAddress
-      finishingAddressCoordinates
-      finishingLocation
-    }
-  }
-`
-
-export interface RaceDayResponse {
-  raceDay: RaceDay
-}
-
-// ----------------------------------------------------------------------------
-
 export interface SaveRaceDayInput {
   raceId: string
   dayId: string
   dayNumber: number | null
   description: string
+  dayOff: boolean
   startingDatetime: Date
+  startingIsPreviousFinish: boolean
   startingAddress: string
   startingAddressCoordinates: string
   startingLocation: string
@@ -160,7 +178,9 @@ export const GQL_RACE_DAY_MUTATION_SAVE = gql`
     $raceId: String!
     $dayNumber: Int
     $description: String
+    $dayOff: Boolean
     $startingDatetime: DateTime
+    $startingIsPreviousFinish: Boolean
     $startingAddress: String
     $startingAddressCoordinates: String
     $startingLocation: String
@@ -174,7 +194,9 @@ export const GQL_RACE_DAY_MUTATION_SAVE = gql`
       raceId: $raceId
       dayNumber: $dayNumber
       description: $description
+      dayOff: $dayOff
       startingDatetime: $startingDatetime
+      startingIsPreviousFinish: $startingIsPreviousFinish
       startingAddress: $startingAddress
       startingAddressCoordinates: $startingAddressCoordinates
       startingLocation: $startingLocation
@@ -227,6 +249,9 @@ export const GQL_RACE_DAY_SUMMARY = gql`
       id
       year
       name
+      startingAddress
+      startingAddressCoordinates
+      startingLocation
     }
     raceTeamTimes(raceId: $raceId, dayId: $dayId) {
       id

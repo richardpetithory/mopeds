@@ -44,6 +44,9 @@ class Queries(graphene.ObjectType):
 
     @staticmethod
     def resolve_race_day(_, info: graphene.ResolveInfo, id):
+        if not id:
+            return None
+
         try:
             return RaceDay.objects.get(id=id)
         except RaceDay.DoesNotExist:
@@ -56,7 +59,7 @@ class Queries(graphene.ObjectType):
 
     @staticmethod
     def resolve_race_days(_, info: graphene.ResolveInfo, race_id):
-        return RaceDay.objects.filter(race_id=race_id)
+        return RaceDay.objects.filter(race_id=race_id).order_by("day_number")
 
     race_summary = graphene.List(
         RaceSummaryType,

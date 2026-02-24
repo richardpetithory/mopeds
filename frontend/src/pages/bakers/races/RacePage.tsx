@@ -1,6 +1,12 @@
 import {Loading} from "@/components/Loading.tsx"
-import {RaceDayFinishingDisplay} from "@/components/locationDisplay/RaceDayFinishingDisplay.tsx"
-import {RaceDayStartingDisplay} from "@/components/locationDisplay/RaceDayStartingDisplay.tsx"
+import {
+  type FinishingLocationDisplayValues,
+  RaceDayFinishingDisplay,
+} from "@/components/locationDisplay/RaceDayFinishingDisplay.tsx"
+import {
+  RaceDayStartingDisplay,
+  type StartingLocationDisplayValues,
+} from "@/components/locationDisplay/RaceDayStartingDisplay.tsx"
 import {PageHeader} from "@/components/PageHeader/PageHeader.tsx"
 import {
   type DeleteRaceResponse,
@@ -126,20 +132,44 @@ export const RacePage = () => {
               </Table.Tr>
             </Table.Thead>
             <Table.Tbody>
-              {data.raceDays.map((raceDay, index) => (
-                <Table.Tr key={raceDay.id}>
-                  <Table.Td className="align-top">
-                    <Link to={`/bakers/races/${raceId}/${raceDay.id}`}>Day {index + 1}</Link>
-                  </Table.Td>
-                  <Table.Td className="align-top">
-                    <RaceDayStartingDisplay raceDay={raceDay} />
-                  </Table.Td>
-                  <Table.Td className="align-top">
-                    <RaceDayFinishingDisplay raceDay={raceDay} />
-                  </Table.Td>
-                  <Table.Td className={"whitespace-pre"}>{raceDay.description}</Table.Td>
-                </Table.Tr>
-              ))}
+              {data.raceDays.map((raceDay, index) => {
+                if (raceDay.dayOff)
+                  return (
+                    <Table.Tr key={raceDay.id} aria-colspan={3}>
+                      <Table.Td colSpan={3}>
+                        <Link to={`/bakers/races/${raceId}/${raceDay.id}`}>Day off!</Link>
+                      </Table.Td>
+                      <Table.Td className={"whitespace-pre"}>{raceDay.description}</Table.Td>
+                    </Table.Tr>
+                  )
+
+                return (
+                  <Table.Tr key={raceDay.id}>
+                    <Table.Td className="align-top">
+                      <Link to={`/bakers/races/${raceId}/${raceDay.id}`}>Day {index + 1}</Link>
+                    </Table.Td>
+                    <Table.Td className="align-top">
+                      {!raceDay.previousDay && (
+                        <RaceDayStartingDisplay
+                          locationValues={data.race as unknown as StartingLocationDisplayValues}
+                        />
+                      )}
+                      {raceDay.previousDay && raceDay.startingIsPreviousFinish && (
+                        <RaceDayFinishingDisplay
+                          locationValues={raceDay.previousDay as unknown as FinishingLocationDisplayValues}
+                        />
+                      )}
+                      {raceDay.previousDay && !raceDay.startingIsPreviousFinish && (
+                        <RaceDayStartingDisplay locationValues={raceDay as unknown as StartingLocationDisplayValues} />
+                      )}
+                    </Table.Td>
+                    <Table.Td className="align-top">
+                      <RaceDayFinishingDisplay locationValues={raceDay} />
+                    </Table.Td>
+                    <Table.Td className={"whitespace-pre"}>{raceDay.description}</Table.Td>
+                  </Table.Tr>
+                )
+              })}
             </Table.Tbody>
           </Table>
         </div>

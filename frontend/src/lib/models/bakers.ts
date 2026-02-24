@@ -6,14 +6,21 @@ export type Race = {
   year: number
   name: string
   description: string
+  startingAddress: string
+  startingAddressCoordinates: Coordinates
+  startingLocation: string
 }
 
 export type RaceDay = {
   id: string
+  previousDay: RaceDay | null
+  nextDay: RaceDay | null
   race: Race
   dayNumber: number
   description: string
+  dayOff: boolean
   startingDatetime: Date
+  startingIsPreviousFinish: boolean
   startingAddress: string
   startingAddressCoordinates: Coordinates
   startingLocation: string

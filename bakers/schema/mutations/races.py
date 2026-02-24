@@ -13,6 +13,9 @@ class SaveRaceMutation(graphene.Mutation):
         year = graphene.Int(required=True)
         name = graphene.String(required=True)
         description = graphene.String()
+        starting_address = graphene.String()
+        starting_address_coordinates = graphene.String()
+        starting_location = graphene.String()
 
     race = graphene.Field(lambda: RaceType)
 
@@ -66,7 +69,9 @@ class SaveRaceDayMutation(graphene.Mutation):
         race_id = graphene.String(required=True)
         day_number = graphene.Int()
         description = graphene.String()
+        day_off = graphene.Boolean()
         starting_datetime = graphene.types.datetime.DateTime()
+        starting_is_previous_finish = graphene.Boolean()
         starting_address = graphene.String()
         starting_address_coordinates = graphene.String()
         starting_location = graphene.String()
@@ -104,8 +109,16 @@ class SaveRaceDayMutation(graphene.Mutation):
                         or 0
                     ) + 1
 
+                previous_day = (
+                    RaceDay.objects.filter(race_id=race_id, day_off=False)
+                    .order_by("day_number")
+                    .last()
+                )
+
                 saved_race_day = RaceDay.objects.create(
-                    race_id=race_id, day_number=int(day_number), **kwargs
+                    race_id=race_id,
+                    day_number=int(day_number),
+                    **(kwargs | {"previous_day": previous_day}),
                 )
 
             return SaveRaceDayMutation(race_day=saved_race_day)

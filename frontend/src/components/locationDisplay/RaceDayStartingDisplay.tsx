@@ -1,14 +1,22 @@
 import {LocationDisplay} from "@/components/locationDisplay/LocationDisplay.tsx"
-import type {RaceDay} from "@/lib/models/bakers.ts"
+import type {Coordinates} from "@/lib/types.ts"
 
-interface RaceDayStartingDisplayProps {
-  raceDay: RaceDay
+export type StartingLocationDisplayValues = {
+  startingAddress: string
+  startingAddressCoordinates: Coordinates
+  startingLocation: string
 }
 
-export const RaceDayStartingDisplay = ({raceDay}: RaceDayStartingDisplayProps) => (
-  <LocationDisplay
-    location={raceDay.startingLocation}
-    address={raceDay.startingAddress}
-    addressCoordinates={raceDay.startingAddressCoordinates}
-  />
-)
+interface RaceDayStartingDisplayProps {
+  locationValues: StartingLocationDisplayValues
+}
+
+export const RaceDayStartingDisplay = ({locationValues}: RaceDayStartingDisplayProps) => {
+  return (
+    <LocationDisplay
+      location={locationValues.startingLocation}
+      address={locationValues.startingAddress}
+      addressCoordinates={locationValues.startingAddressCoordinates}
+    />
+  )
+}
