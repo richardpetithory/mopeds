@@ -1,0 +1,52 @@
+alerts:
+  - rule: DEPLOYMENT_FAILED
+  - rule: DOMAIN_FAILED
+databases:
+  - cluster_name: mopeds-db
+    engine: PG
+    name: mopeds-db
+    production: true
+    version: "18"
+domains:
+  - domain: mopeds.lol
+    type: PRIMARY
+    zone: mopeds.lol
+envs:
+  - key: DATABASE_URL
+    scope: RUN_AND_BUILD_TIME
+  - key: ALLOWED_HOSTS
+    scope: RUN_AND_BUILD_TIME
+    value: mopeds.lol
+features:
+  - buildpack-stack=ubuntu-22
+ingress:
+  rules:
+    - component:
+        name: mopeds-web
+      match:
+        authority:
+          exact: ""
+        path:
+          prefix: /
+name: mopeds-app
+region: nyc
+services:
+  - build_command: |-
+      npm run build
+    environment_slug: python
+    github:
+      branch: master
+      deploy_on_push: true
+      repo: richardpetithory/mopeds
+    health_check:
+      failure_threshold: 9
+      period_seconds: 10
+      port: 80
+      success_threshold: 1
+      timeout_seconds: 1
+    http_port: 80
+    instance_count: 2
+    instance_size_slug: apps-s-1vcpu-1gb
+    name: mopeds-web
+    run_command: ./entrypoint.sh
+    source_dir: /

@@ -1,0 +1,22 @@
+@import "tailwindcss";
+
+.page-header {
+  @apply flex items-center mb-4;
+  height: 2rem;
+}
+
+.page-breadcrumbs {
+  @apply p-2;
+}
+
+.mantine-Group-root {
+  @apply mb-4;
+}
+
+.fit-content {
+  width: fit-content;
+}
+
+a {
+  text-decoration: underline;
+}

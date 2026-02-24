@@ -1,0 +1,44 @@
+volumes:
+  postgres_data:
+  node_modules:
+
+services:
+  db:
+    image: postgres:14-alpine
+    ports:
+      - "6543:5432"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
+  #  frontend:
+  #    build:
+  #      context: ./frontend
+  #      dockerfile: Dockerfile
+  #    ports:
+  #      - "3000:3000"
+  #    volumes:
+  #      - node_modules:/frontend/node_modules
+  #      - ./frontend:/frontend
+  #    depends_on:
+  #      - backend
+
+  backend:
+    build:
+      context: ./
+      dockerfile: local.Dockerfile
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - DEVELOPMENT_MODE=${DEVELOPMENT_MODE}
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./:/backend
+    depends_on:
+      - db
