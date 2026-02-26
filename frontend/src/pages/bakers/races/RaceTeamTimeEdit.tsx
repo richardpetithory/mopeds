@@ -9,7 +9,7 @@ import {
   type SaveRaceTeamTimeResponse,
 } from "@/lib/gql/bakers/races.ts"
 import {useMutation, useQuery} from "@apollo/client/react"
-import {Alert, Button, Group, Select, Switch, Textarea} from "@mantine/core"
+import {Alert, Button, Group, Select, Switch, Textarea, TextInput} from "@mantine/core"
 import {TimeInput} from "@mantine/dates"
 import {useForm} from "@mantine/form"
 import {notifications} from "@mantine/notifications"
@@ -21,17 +21,20 @@ import {useNavigate, useParams} from "react-router"
 export const RaceTeamTimeEdit = () => {
   const navigate = useNavigate()
 
-  const {raceId, dayId, raceTeamTimeId} = useParams()
+  const {raceId, dayId, raceTeamId} = useParams()
 
   const [doSave, {loading: awaitingMutation, error}] = useMutation<SaveRaceTeamTimeResponse>(
     GQL_RACE_TEAM_TIME_MUTATION_SAVE
   )
 
   const {data, loading: loadingRace} = useQuery<RaceTeamTimeResponse>(GQL_RACE_TEAM_TIME, {
+    fetchPolicy: "network-only",
     variables: {
-      id: raceTeamTimeId,
+      raceId,
+      dayId,
+      raceTeamId,
     },
-    skip: !raceTeamTimeId,
+    skip: !raceTeamId,
   })
 
   const {data: dependencyData, loading: loadingDependencyData} = useQuery<RaceTeamTimeResponse>(
@@ -99,20 +102,27 @@ export const RaceTeamTimeEdit = () => {
   }
 
   if (loadingRace || loadingDependencyData) return <Loading />
-
+  console.log(data)
   return (
     <form onSubmit={onSubmit(handleSubmit)}>
       <Group>
-        <Select
-          label={"Team"}
-          data={(dependencyData?.raceTeamsWithoutTimes || []).map((raceTeam) => {
-            return {
-              value: raceTeam.id,
-              label: raceTeam.team.name,
-            }
-          })}
-          {...getInputProps("raceTeamId")}
-        />
+        {raceTeamId && (
+          <Group>
+            <TextInput label={"Team"} value={data?.raceTeamTime.raceTeam.team.name} disabled={true} />
+          </Group>
+        )}
+        {!raceTeamId && (
+          <Select
+            label={"Team"}
+            data={(dependencyData?.raceTeamsWithoutTimes || []).map((raceTeam) => {
+              return {
+                value: raceTeam.id,
+                label: raceTeam.team.name,
+              }
+            })}
+            {...getInputProps("raceTeamId")}
+          />
+        )}
       </Group>
       <Group>
         <TimeInput label={"Finish Time"} {...getInputProps("finishTime")} disabled={values["dnf"]} />

@@ -47,7 +47,7 @@ export const routes: RouteObject[] = [
           {path: PATH_RACES + "/:raceId/:dayId", element: <RaceDayPage />},
           {path: PATH_RACES + "/:raceId/:dayId/edit", element: <RaceDayEdit />},
           {path: PATH_RACES + "/:raceId/:dayId/new", element: <RaceTeamTimeEdit />},
-          {path: PATH_RACES + "/:raceId/:dayId/:raceTeamTimeId", element: <RaceTeamTimeEdit />},
+          {path: PATH_RACES + "/:raceId/:dayId/:raceTeamId", element: <RaceTeamTimeEdit />},
 
           {path: PATH_TEAMS, element: <TeamsPage />},
           {path: PATH_TEAMS + "/new", element: <TeamEdit />},

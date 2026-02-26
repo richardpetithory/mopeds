@@ -94,7 +94,7 @@ class Queries(graphene.ObjectType):
     ):
         try:
             return RaceTeamTime.objects.get(
-                race_id=race_id, day_id=day_id, race_team_id=race_team_id
+                race_team__race_id=race_id, day_id=day_id, race_team_id=race_team_id
             )
         except RaceTeamTime.DoesNotExist:
             return None

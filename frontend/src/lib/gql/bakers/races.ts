@@ -256,9 +256,13 @@ export const GQL_RACE_DAY_SUMMARY = gql`
     raceTeamTimes(raceId: $raceId, dayId: $dayId) {
       id
       day {
+        id
         dayNumber
       }
       raceTeam {
+        race {
+          id
+        }
         team {
           id
           name
@@ -301,9 +305,11 @@ export const GQL_RACE_TEAM_TIME = gql`
       raceTeam {
         race {
           id
+          name
         }
         team {
           id
+          name
         }
       }
       finishTime

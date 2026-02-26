@@ -123,7 +123,13 @@ export const RaceDayPage = () => {
               <Table.Td>
                 <Link to={`/bakers/teams/${raceTeamTime.raceTeam.team.id}`}>{raceTeamTime.raceTeam.team.name}</Link>
               </Table.Td>
-              <Table.Td>{!raceTeamTime.dnf ? formatTimeString(raceTeamTime.finishTime) : "-"}</Table.Td>
+              <Table.Td>
+                <Link
+                  to={`/bakers/races/${raceTeamTime.raceTeam.race.id}/${raceTeamTime.raceTeam.team.id}/${raceTeamTime.id}`}
+                >
+                  {!raceTeamTime.dnf ? formatTimeString(raceTeamTime.finishTime) : "-"}
+                </Link>
+              </Table.Td>
               <Table.Td>{raceTeamTime.dnf ? <FaRegFaceFrownOpen color={"orange"} size={20} /> : null}</Table.Td>
             </Table.Tr>
           ))}
