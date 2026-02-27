@@ -4,6 +4,7 @@ import {RaceName} from "@/components/RaceName.tsx"
 import {RiderName} from "@/components/RiderName.tsx"
 import {GQL_TEAM_SUMMARY, type TeamSummaryResponse} from "@/lib/gql/bakers/teams.ts"
 import {useRiderContext} from "@/lib/userContext/riderContext.ts"
+import {NotFoundPage} from "@/pages/NotFoundPage.tsx"
 import {useQuery} from "@apollo/client/react"
 import {Button, Card, SimpleGrid, Table} from "@mantine/core"
 import {Link, useParams} from "react-router"
@@ -19,6 +20,9 @@ export const TeamPage = () => {
   })
 
   if (!data) return <Loading />
+
+  console.log(data.team)
+  if (!data.team) return <NotFoundPage />
 
   return (
     <>

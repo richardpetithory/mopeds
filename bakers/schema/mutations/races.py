@@ -146,7 +146,7 @@ class DeleteRaceDayMutation(graphene.Mutation):
         try:
             RaceDay.objects.get(id=day_id).delete()
 
-            return DeleteRaceMutation(ok=True)
+            return DeleteRaceDayMutation(ok=True)
         except Exception as e:
             raise GraphQLError(str(e))
 

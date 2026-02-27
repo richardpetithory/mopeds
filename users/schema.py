@@ -4,6 +4,10 @@ from graphene_django import DjangoObjectType
 
 from bakers.models import RaceTeamMembership
 from bakers.schema.types import RaceTeamMembershipType
+from mopeds.decorators import (
+    WrappedObjectType,
+    validation_error_handler,
+)
 from .models import Rider
 
 
@@ -13,15 +17,12 @@ class RiderType(DjangoObjectType):
         exclude_fields = ("password",)
 
 
-class Queries(graphene.ObjectType):
+class Queries(WrappedObjectType):
     rider = graphene.Field(RiderType, id=graphene.String(required=True))
 
     @staticmethod
     def resolve_rider(_, info: graphene.ResolveInfo, id):
-        try:
-            return Rider.objects.get(id=id)
-        except Rider.DoesNotExist:
-            return None
+        return Rider.objects.get(id=id)
 
     riders = graphene.List(
         RiderType,
@@ -78,7 +79,29 @@ class Queries(graphene.ObjectType):
         return RaceTeamMembership.objects.filter(team_id=team_id).distinct()
 
 
+class RegisterMutation(graphene.Mutation):
+    class Arguments:
+        name = graphene.String(required=True)
+        email = graphene.String(required=True)
+        password = graphene.String(required=True)
+
+    ok = graphene.Boolean()
+
+    @staticmethod
+    @validation_error_handler
+    def mutate(_, info: graphene.ResolveInfo, name, email, password):
+        person = Rider(name=name, email=email)
+
+        person.set_password(password)
+        person.full_clean()
+        person.save()
+
+        return RegisterMutation(ok=True)
+
+
 class Mutations(graphene.ObjectType):
     token_auth = graphql_jwt.ObtainJSONWebToken.Field()
     verify_token = graphql_jwt.Verify.Field()
     refresh_token = graphql_jwt.Refresh.Field()
+
+    register = RegisterMutation.Field()

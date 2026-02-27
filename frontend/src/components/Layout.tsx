@@ -1,17 +1,22 @@
 import {useRiderContext} from "@/lib/userContext/riderContext.ts"
-import {PATH_LOGIN, PATH_RACES, PATH_RIDERS, PATH_TEAMS} from "@/routes.tsx"
-import {AppShell, NavLink} from "@mantine/core"
+import {PATH_LOGIN, PATH_LOGOUT, PATH_RACES, PATH_REGISTER, PATH_RIDERS, PATH_TEAMS} from "@/routes.tsx"
+import {AppShell, Divider, NavLink} from "@mantine/core"
 import {useDisclosure} from "@mantine/hooks"
 import {isArray, some} from "lodash"
 import {LuDonut} from "react-icons/lu"
 import {Link, Outlet, ScrollRestoration, useLocation} from "react-router"
 
 import logo from "@/assets/logo.png"
+import {NotFoundContext} from "@/lib/NotFoundContext.ts"
+import {NotFoundPage} from "@/pages/NotFoundPage.tsx"
+import {useContext, useEffect, useState} from "react"
 
 export const Layout = () => {
   const {currentRider} = useRiderContext()
+  const {notFound} = useContext(NotFoundContext)
   const {pathname} = useLocation()
   const [opened, {toggle}] = useDisclosure()
+  const [showNotFound, setShowNotFound] = useState<boolean | null>(false)
 
   const isActive = (navPath: string | string[]) =>
     some(isArray(navPath) ? navPath : [navPath], (path) => {
@@ -19,6 +24,10 @@ export const Layout = () => {
       if (isArray(navPath)) console.log(pathname, path, matches)
       return matches
     })
+
+  useEffect(() => {
+    setShowNotFound(notFound)
+  }, [notFound])
 
   return (
     <AppShell
@@ -43,17 +52,25 @@ export const Layout = () => {
 
       <AppShell.Navbar>
         <NavLink label="Bakers" leftSection={<LuDonut />} childrenOffset={28} defaultOpened={true}>
-          <NavLink label="Races" component={Link} to={"/bakers/races"} active={isActive(PATH_RACES)} />
-          <NavLink label="Teams" component={Link} to={"/bakers/teams"} active={isActive(PATH_TEAMS)} />
+          <NavLink label="Races" component={Link} to={PATH_RACES} active={isActive(PATH_RACES)} />
+          <NavLink label="Teams" component={Link} to={PATH_TEAMS} active={isActive(PATH_TEAMS)} />
         </NavLink>
         <NavLink label="Riders" component={Link} to={"/riders"} active={isActive(PATH_RIDERS)} />
-        {!currentRider?.id && <NavLink label="Log In" component={Link} to={"/login"} active={isActive(PATH_LOGIN)} />}
-        {currentRider?.id && <NavLink label="Log Out" component={Link} to={"/logout"} />}
+        <div className={"m-auto"} />
+        <Divider />
+        {!currentRider?.id && (
+          <>
+            <NavLink label="Register" component={Link} to={PATH_REGISTER} active={isActive(PATH_REGISTER)} />
+            <NavLink label="Log In" component={Link} to={PATH_LOGIN} active={isActive(PATH_LOGIN)} />
+          </>
+        )}
+        {currentRider?.id && <NavLink label="Log Out" component={Link} to={PATH_LOGOUT} />}
       </AppShell.Navbar>
 
       <AppShell.Main>
         <ScrollRestoration />
-        <Outlet />
+        {showNotFound && <NotFoundPage />}
+        {!showNotFound && <Outlet />}
       </AppShell.Main>
     </AppShell>
   )

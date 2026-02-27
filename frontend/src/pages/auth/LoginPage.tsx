@@ -1,10 +1,24 @@
-import {LOGIN_MUTATION, type TokenAuthResponse} from "@/lib/gql/mopeds.ts"
 import {GQL_CURRENT_RIDER_INFO} from "@/lib/gql/users.ts"
 import {useRiderContext} from "@/lib/userContext/riderContext.ts"
+import {gql} from "@apollo/client"
 import {useMutation} from "@apollo/client/react"
 import {Alert, Button, Group, PasswordInput, TextInput} from "@mantine/core"
 import {useForm} from "@mantine/form"
 import {useNavigate} from "react-router"
+
+const LOGIN_MUTATION = gql`
+  mutation TokenAuth($email: String!, $password: String!) {
+    tokenAuth(email: $email, password: $password) {
+      token
+    }
+  }
+`
+
+interface TokenAuthResponse {
+  tokenAuth: {
+    token: string
+  }
+}
 
 type Credentials = {
   email: string

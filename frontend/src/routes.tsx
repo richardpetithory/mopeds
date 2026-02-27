@@ -1,6 +1,7 @@
 import {Layout} from "@/components/Layout.tsx"
 import {LoginPage} from "@/pages/auth/LoginPage.tsx"
 import {LogoutPage} from "@/pages/auth/LogoutPage.tsx"
+import {RegisterPage} from "@/pages/auth/RegisterPage.tsx"
 import {RaceDayEdit} from "@/pages/bakers/races/RaceDayEdit.tsx"
 import {RaceDayPage} from "@/pages/bakers/races/RaceDayPage.tsx"
 import {RaceEdit} from "@/pages/bakers/races/RaceEdit.tsx"
@@ -20,7 +21,9 @@ import {Navigate, type RouteObject} from "react-router"
 export const PATH_RACES = "/bakers/races"
 export const PATH_TEAMS = "/bakers/teams"
 export const PATH_RIDERS = "/riders"
+export const PATH_REGISTER = "/register"
 export const PATH_LOGIN = "/login"
+export const PATH_LOGOUT = "/logout"
 
 export const routes: RouteObject[] = [
   {
@@ -28,17 +31,14 @@ export const routes: RouteObject[] = [
     handle: {path: "/"},
     element: <Layout />,
     children: [
-      {index: true, element: <Navigate to={"bakers"} />},
+      {index: true, element: <Navigate to={PATH_RACES} />},
+      {path: PATH_REGISTER, element: <RegisterPage />},
       {path: PATH_LOGIN, element: <LoginPage />},
-      {path: "logout", element: <LogoutPage />},
-      {
-        path: "*",
-        element: <NotFoundPage />,
-      },
+      {path: PATH_LOGOUT, element: <LogoutPage />},
       {
         path: "bakers",
         children: [
-          {index: true, element: <Navigate to={"races"} />},
+          {index: true, element: <Navigate to={PATH_RACES} />},
           {path: PATH_RACES, element: <RacesPage />},
           {path: PATH_RACES + "/new", element: <RaceEdit />},
           {path: PATH_RACES + "/:raceId", element: <RacePage />},
@@ -63,6 +63,10 @@ export const routes: RouteObject[] = [
           {index: true, element: <RidersPage />},
           {path: ":riderId", element: <RiderPage />},
         ],
+      },
+      {
+        path: "*",
+        element: <NotFoundPage />,
       },
     ],
   },

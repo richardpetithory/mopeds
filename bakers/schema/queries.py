@@ -17,17 +17,15 @@ from bakers.schema.types import (
     RaceTeamType,
     RaceTeamMembershipType,
 )
+from mopeds.decorators import WrappedObjectType
 
 
-class Queries(graphene.ObjectType):
+class Queries(WrappedObjectType):
     race = graphene.Field(RaceType, id=graphene.String(required=True))
 
     @staticmethod
     def resolve_race(_, info: graphene.ResolveInfo, id):
-        try:
-            return Race.objects.get(id=id)
-        except Race.DoesNotExist:
-            return None
+        return Race.objects.get(id=id)
 
     races = graphene.List(
         RaceType,
@@ -47,10 +45,7 @@ class Queries(graphene.ObjectType):
         if not id:
             return None
 
-        try:
-            return RaceDay.objects.get(id=id)
-        except RaceDay.DoesNotExist:
-            return None
+        return RaceDay.objects.get(id=id)
 
     race_days = graphene.List(
         RaceDayType,
