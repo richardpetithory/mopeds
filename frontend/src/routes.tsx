@@ -1,4 +1,4 @@
-import {AppLayout} from "@/components/AppLayout.tsx"
+import {Layout} from "@/components/Layout.tsx"
 import {LoginPage} from "@/pages/auth/LoginPage.tsx"
 import {LogoutPage} from "@/pages/auth/LogoutPage.tsx"
 import {RaceDayEdit} from "@/pages/bakers/races/RaceDayEdit.tsx"
@@ -26,7 +26,7 @@ export const routes: RouteObject[] = [
   {
     path: "/",
     handle: {path: "/"},
-    element: <AppLayout />,
+    element: <Layout />,
     children: [
       {index: true, element: <Navigate to={"bakers"} />},
       {path: PATH_LOGIN, element: <LoginPage />},

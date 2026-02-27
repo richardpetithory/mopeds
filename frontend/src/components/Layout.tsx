@@ -1,12 +1,14 @@
 import {useRiderContext} from "@/lib/userContext/riderContext.ts"
 import {PATH_LOGIN, PATH_RACES, PATH_RIDERS, PATH_TEAMS} from "@/routes.tsx"
-import {AppShell, Burger, NavLink} from "@mantine/core"
+import {AppShell, NavLink} from "@mantine/core"
 import {useDisclosure} from "@mantine/hooks"
 import {isArray, some} from "lodash"
 import {LuDonut} from "react-icons/lu"
 import {Link, Outlet, ScrollRestoration, useLocation} from "react-router"
 
-export const AppLayout = () => {
+import logo from "@/assets/logo.png"
+
+export const Layout = () => {
   const {currentRider} = useRiderContext()
   const {pathname} = useLocation()
   const [opened, {toggle}] = useDisclosure()
@@ -29,13 +31,14 @@ export const AppLayout = () => {
       }}
     >
       <AppShell.Header>
-        <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
+        {/*<Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm"></Burger>*/}
 
-        <div className={"text-3xl flex"} style={{height: "100%"}}>
-          <Link className={"my-auto ms-4"} to={"/"}>
-            😂
-          </Link>
-        </div>
+        <Link to={"/"} className={"flex h-full items-center cursor-pointer"} onClick={toggle}>
+          <img src={logo} alt={"logo"} className={"ms-3"} height={32} width={32} />
+        </Link>
+        {/*<div className={"flex h-full items-center cursor-pointer"} role={"button"} onClick={toggle}>*/}
+        {/*  <img src={logo} alt={"logo"} className={"ms-3"} height={32} width={32} />*/}
+        {/*</div>*/}
       </AppShell.Header>
 
       <AppShell.Navbar>

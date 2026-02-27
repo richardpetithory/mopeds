@@ -57,7 +57,6 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
             ],
             "loaders": [
-                # "mopeds.loaders.LayoutLoader",
                 "django.template.loaders.filesystem.Loader",
                 "django.template.loaders.app_directories.Loader",
             ],
@@ -111,10 +110,7 @@ USE_I18N = True
 USE_L10N = True
 
 STATIC_URL = "/static/"
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, "frontend", "dist"),
-    os.path.join(BASE_DIR, "frontend", "static"),
-)
+STATICFILES_DIRS = (os.path.join(BASE_DIR, "frontend", "dist"),)
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 

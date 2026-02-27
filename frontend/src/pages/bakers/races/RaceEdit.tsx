@@ -35,9 +35,9 @@ export const RaceEdit = () => {
       year: Number(format(new Date(), "yyyy")),
       name: "",
       description: "",
-      startingAddress: "Pee Pee Island, Newfoundland and Labrador, Canada",
-      startingAddressCoordinates: "47.191657,-52.837253",
-      startingLocation: "Pee Pee Island",
+      startingAddress: "",
+      startingAddressCoordinates: "",
+      startingLocation: "",
     },
     validate: {
       year: (value) => {
