@@ -52,7 +52,7 @@ export const RegisterPage = () => {
   return (
     <form onSubmit={onSubmit(handleSubmit)}>
       <Group>
-        <TextInput type={"name"} label={"Name"} {...getInputProps("name")} className={"w-100"} />
+        <TextInput type={"name"} label={"Name"} {...getInputProps("name")} className={"w-100"} autoFocus />
       </Group>
       <Group>
         <TextInput type={"email"} label={"Email"} {...getInputProps("email")} className={"w-100"} />
@@ -62,11 +62,11 @@ export const RegisterPage = () => {
       </Group>
       <Group>
         <Button type={"submit"} disabled={awaitingMutation}>
-          Log In
+          Register
         </Button>
       </Group>
 
-      {error && (
+      {error?.message && error?.message !== "NONE" && (
         <Alert variant={"filled"} color={"red"} className={"fit-content"}>
           {error?.message}
         </Alert>

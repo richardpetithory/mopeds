@@ -1,6 +1,7 @@
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 from django.core.mail import send_mail
+from django.core.validators import MinLengthValidator
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext as _
@@ -13,7 +14,13 @@ class Rider(AbstractBaseUser, PermissionsMixin):
         verbose_name = _("Rider")
         verbose_name_plural = _("Riders")
 
-    name = models.CharField(_("Name"), max_length=100, blank=False, null=False)
+    name = models.CharField(
+        _("Name"),
+        max_length=100,
+        blank=False,
+        null=False,
+        validators=[MinLengthValidator(1)],
+    )
 
     email = models.EmailField(_("Email Address"), unique=True, blank=False, null=False)
 

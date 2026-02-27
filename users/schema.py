@@ -1,5 +1,7 @@
 import graphene
 import graphql_jwt
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 from graphene_django import DjangoObjectType
 
 from bakers.models import RaceTeamMembership
@@ -90,10 +92,24 @@ class RegisterMutation(graphene.Mutation):
     @staticmethod
     @validation_error_handler
     def mutate(_, info: graphene.ResolveInfo, name, email, password):
-        person = Rider(name=name, email=email)
+        person = Rider(name=name, email=email, password=password)
+
+        errors = {}
+
+        try:
+            person.full_clean()
+        except ValidationError as e:
+            errors = errors | e.message_dict
+
+        try:
+            validate_password(password)
+        except ValidationError as e:
+            errors = errors | {"password": e.messages}
+
+        if errors:
+            raise ValidationError(errors)
 
         person.set_password(password)
-        person.full_clean()
         person.save()
 
         return RegisterMutation(ok=True)

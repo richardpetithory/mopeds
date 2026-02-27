@@ -28,6 +28,6 @@ def validation_error_handler(func):
         try:
             return func(*args, **kwargs)
         except ValidationError as e:
-            return GraphQLError(extensions=e.message_dict, message=str(e))
+            return GraphQLError(extensions=e.message_dict, message="NONE")
 
     return wrapper
