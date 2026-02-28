@@ -7,6 +7,7 @@ export const GQL_TEAM = gql`
       id
       name
       description
+      logo
       manager {
         id
         name
@@ -26,15 +27,17 @@ export interface SaveTeamInput {
   name: string
   description: string
   managerId: string | null
+  logo: string | null
 }
 
 export const GQL_TEAM_MUTATION = gql`
-  mutation SaveTeam($id: String, $name: String!, $description: String, $managerId: String) {
-    saveTeam(id: $id, name: $name, description: $description, managerId: $managerId) {
+  mutation SaveTeam($id: String, $name: String!, $description: String, $managerId: String, $logo: Upload) {
+    saveTeam(id: $id, name: $name, description: $description, managerId: $managerId, logo: $logo) {
       team {
         id
         name
         description
+        logo
         manager {
           id
           name
@@ -58,6 +61,7 @@ export const GQL_TEAM_SUMMARY = gql`
       id
       name
       description
+      logo
       manager {
         id
         name

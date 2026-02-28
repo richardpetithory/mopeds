@@ -56,6 +56,15 @@ class Queries(WrappedObjectType):
     def resolve_race_days(_, info: graphene.ResolveInfo, race_id):
         return RaceDay.objects.filter(race_id=race_id).order_by("day_number")
 
+    last_day_for_race = graphene.Field(
+        RaceDayType,
+        race_id=graphene.String(required=True),
+    )
+
+    @staticmethod
+    def resolve_last_day_for_race(_, info: graphene.ResolveInfo, race_id):
+        return RaceDay.objects.filter(race_id=race_id).order_by("-day_number").first()
+
     race_summary = graphene.List(
         RaceSummaryType,
         race_id=graphene.String(required=True),
@@ -108,10 +117,7 @@ class Queries(WrappedObjectType):
 
     @staticmethod
     def resolve_team(_, info: graphene.ResolveInfo, id):
-        try:
-            return Team.objects.get(id=id)
-        except Team.DoesNotExist:
-            return None
+        return Team.objects.get(id=id)
 
     teams = graphene.List(
         TeamType,

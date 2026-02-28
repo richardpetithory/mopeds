@@ -2,11 +2,12 @@ import {Loading} from "@/components/Loading.tsx"
 import {PageHeader} from "@/components/PageHeader/PageHeader.tsx"
 import {RaceName} from "@/components/RaceName.tsx"
 import {RiderName} from "@/components/RiderName.tsx"
+import {formatFilename} from "@/lib/formatting.ts"
 import {GQL_TEAM_SUMMARY, type TeamSummaryResponse} from "@/lib/gql/bakers/teams.ts"
 import {useRiderContext} from "@/lib/userContext/riderContext.ts"
 import {NotFoundPage} from "@/pages/NotFoundPage.tsx"
 import {useQuery} from "@apollo/client/react"
-import {Button, Card, SimpleGrid, Table} from "@mantine/core"
+import {Button, Card, Image, SimpleGrid, Table} from "@mantine/core"
 import {Link, useParams} from "react-router"
 
 export const TeamPage = () => {
@@ -52,6 +53,14 @@ export const TeamPage = () => {
         <Card shadow="sm" padding="md" radius="sm" withBorder className={"mx-2 my-4 fit-content"}>
           {data.team.description}
         </Card>
+      )}
+
+      {data.team.logo && (
+        <Image
+          src={formatFilename(data.team.logo)}
+          alt={`${data.team.name} logo`}
+          className={"max-h-96 max-w-96 object-contain"}
+        />
       )}
 
       <SimpleGrid cols={2} className={"mx-2 my-4 fit-content"}>

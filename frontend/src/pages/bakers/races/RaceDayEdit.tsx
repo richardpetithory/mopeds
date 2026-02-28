@@ -15,7 +15,8 @@ import {DateTimePicker} from "@mantine/dates"
 import {useForm} from "@mantine/form"
 import {notifications} from "@mantine/notifications"
 import {set} from "date-fns"
-import {useEffect} from "react"
+import {pick} from "lodash"
+import {useState} from "react"
 import {useNavigate, useParams} from "react-router"
 
 const GQL_DEPENDENCY_DATA = gql`
@@ -44,12 +45,18 @@ const GQL_DEPENDENCY_DATA = gql`
       finishingAddressCoordinates
       finishingLocation
     }
+    lastDayForRace(raceId: $raceId) {
+      finishingAddress
+      finishingAddressCoordinates
+      finishingLocation
+    }
   }
 `
 
 export interface DependencyData {
   race: Race
   raceDay: RaceDay
+  lastDayForRace: RaceDay
 }
 
 export const RaceDayEdit = () => {
@@ -75,43 +82,61 @@ interface RaceDayEditFormProps {
   dependencyData: DependencyData
 }
 
+type RaceDayFinishValues = Pick<
+  SaveRaceDayInput,
+  "finishingAddress" | "finishingAddressCoordinates" | "finishingLocation"
+>
+
 const RaceDayEditForm = ({raceId, dependencyData}: RaceDayEditFormProps) => {
   const navigate = useNavigate()
 
+  const [originalFinishValues, setOriginalFinishValues] = useState<RaceDayFinishValues>({
+    finishingAddress: dependencyData?.raceDay?.finishingAddress || "",
+    finishingAddressCoordinates: dependencyData?.raceDay?.finishingAddressCoordinates || "",
+    finishingLocation: dependencyData?.raceDay?.finishingLocation || "",
+  })
+
   const [doSave, {loading: awaitingMutation, error}] = useMutation<SaveRaceDayResponse>(GQL_RACE_DAY_MUTATION_SAVE)
 
-  const {setValues, onSubmit, getInputProps, values} = useForm<SaveRaceDayInput>({
-    initialValues: {
-      raceId: raceId || "",
-      dayId: "",
-      dayNumber: null,
-      description: "",
-      dayOff: false,
-      startingDatetime: set(new Date(), {
-        hours: 10,
-        minutes: 0,
-        seconds: 0,
-        milliseconds: 0,
-      }),
-      startingIsPreviousFinish: true,
-      startingAddress: "",
-      startingAddressCoordinates: "",
-      startingLocation: "",
+  const {watch, setValues, onSubmit, getInputProps, values} = useForm<SaveRaceDayInput>({
+    initialValues: dependencyData.raceDay
+      ? {...dependencyData.raceDay, raceId: dependencyData.race.id, dayId: dependencyData.raceDay.id}
+      : {
+          raceId: raceId || "",
+          dayId: "",
+          dayNumber: null,
+          description: "",
+          dayOff: false,
+          startingDatetime: set(new Date(), {
+            hours: 10,
+            minutes: 0,
+            seconds: 0,
+            milliseconds: 0,
+          }),
+          startingIsPreviousFinish: true,
+          startingAddress: "",
+          startingAddressCoordinates: "",
+          startingLocation: "",
 
-      finishingAddress: "",
-      finishingAddressCoordinates: "",
-      finishingLocation: "",
+          finishingAddress: "",
+          finishingAddressCoordinates: "",
+          finishingLocation: "",
 
-      commentary: "",
-    },
+          commentary: "",
+        },
     validate: {},
   })
 
-  useEffect(() => {
-    if (dependencyData?.raceDay) {
-      setValues(dependencyData?.raceDay)
+  watch("dayOff", ({value}) => {
+    if (value) {
+      setOriginalFinishValues(pick(values, ["finishingAddress", "finishingAddressCoordinates", "finishingLocation"]))
+      setValues(
+        pick(dependencyData?.lastDayForRace, ["finishingAddress", "finishingAddressCoordinates", "finishingLocation"])
+      )
+    } else {
+      setValues(originalFinishValues)
     }
-  }, [dependencyData, raceId, setValues])
+  })
 
   const handleSubmit = (data: SaveRaceDayInput) => {
     doSave({
@@ -150,7 +175,13 @@ const RaceDayEditForm = ({raceId, dependencyData}: RaceDayEditFormProps) => {
 
       <form onSubmit={onSubmit(handleSubmit)} className={"page-form"}>
         <Group>
-          <TextInput label={"Day #"} {...getInputProps("dayNumber")} disabled={true} placeholder={"Auto-generated"} />
+          <TextInput
+            label={"Day #"}
+            {...getInputProps("dayNumber")}
+            value={getInputProps("dayNumber").value ?? ""}
+            disabled={true}
+            placeholder={"Auto-generated"}
+          />
         </Group>
         <Group>
           <Switch label={"Day off!"} {...getInputProps("dayOff", {type: "checkbox"})} />

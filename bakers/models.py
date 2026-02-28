@@ -5,6 +5,8 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext as _
 
+from mopeds.utils import generate_upload_filename
+
 
 class Race(models.Model):
     class Meta:
@@ -191,11 +193,9 @@ class RaceTeamTime(models.Model):
         return f"{self.id}: Time for {self.race_team.team} on {self.day.day_number}: {self.result}"
 
 
-def upload_to(instance, filename):
-    return "images/{filename}".format(filename=filename)
-
-
 class Team(models.Model):
+    upload_to = "teams"
+
     class Meta:
         verbose_name = _("Teams")
         verbose_name_plural = _("Teams")
@@ -206,7 +206,7 @@ class Team(models.Model):
 
     description = models.TextField(_("Description"), blank=True, null=False, default="")
 
-    logo = models.ImageField(upload_to=upload_to, blank=True, null=True)
+    logo = models.ImageField(upload_to=generate_upload_filename, blank=True, null=True)
 
     manager = models.ForeignKey(
         to=settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING

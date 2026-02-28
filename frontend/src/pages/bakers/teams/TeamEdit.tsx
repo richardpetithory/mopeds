@@ -12,7 +12,7 @@ import {
 import type {Team} from "@/lib/models/bakers.ts"
 import {useRiderContext} from "@/lib/userContext/riderContext.ts"
 import {useMutation, useQuery} from "@apollo/client/react"
-import {Alert, Button, Group, Textarea, TextInput} from "@mantine/core"
+import {Alert, Button, FileInput, Group, Textarea, TextInput} from "@mantine/core"
 import {useForm} from "@mantine/form"
 import {notifications} from "@mantine/notifications"
 import {omit} from "lodash"
@@ -41,7 +41,7 @@ const TeamEditForm = ({team}: {team: Team}) => {
 
   const [doSave, {loading: awaitingMutation, error}] = useMutation<SaveTeamResponse>(GQL_TEAM_MUTATION)
 
-  const {onSubmit, getInputProps, isDirty} = useForm<SaveTeamInput>({
+  const {onSubmit, getInputProps, isDirty, values} = useForm<SaveTeamInput>({
     initialValues: team
       ? {
           ...omit(team, "manager"),
@@ -52,6 +52,7 @@ const TeamEditForm = ({team}: {team: Team}) => {
           name: "",
           description: "",
           managerId: currentRider?.id || null,
+          logo: null,
         },
   })
 
@@ -68,7 +69,7 @@ const TeamEditForm = ({team}: {team: Team}) => {
   }
 
   return (
-    <>
+    <div className={"flex flex-col gap-8"}>
       <PageHeader
         breadCrumbs={[{label: "Bakers", to: "/bakers"}, {label: "Teams", to: "/bakers/teams"}, {label: team.name}]}
         staffActions={
@@ -102,6 +103,16 @@ const TeamEditForm = ({team}: {team: Team}) => {
         <Group>
           <Textarea label={"Description"} {...getInputProps("description")} />
         </Group>
+        <Group className={"flex items-end gap-4 "}>
+          <FileInput
+            clearable
+            variant="filled"
+            accept="image/png,image/jpeg"
+            placeholder={values.logo ? "Change team logo" : "Upload team logo"}
+            {...getInputProps("logo")}
+            className={"w-50"}
+          />
+        </Group>
         <Group>
           <Button type={"submit"} disabled={awaitingMutation || !isDirty()}>
             Save
@@ -113,6 +124,6 @@ const TeamEditForm = ({team}: {team: Team}) => {
           </Alert>
         )}
       </form>
-    </>
+    </div>
   )
 }

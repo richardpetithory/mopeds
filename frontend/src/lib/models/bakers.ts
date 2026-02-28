@@ -37,6 +37,7 @@ export type Team = {
   name: string
   description: string
   manager: Rider
+  logo: string
 }
 
 export type RaceTeamMembership = {

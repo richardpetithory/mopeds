@@ -1,5 +1,6 @@
 import graphene
 from django.shortcuts import get_object_or_404
+from graphene_file_upload.scalars import Upload
 from graphql import GraphQLError
 
 from bakers.models import Team, RaceTeamMembership, RaceTeam
@@ -13,6 +14,7 @@ class SaveTeamMutation(graphene.Mutation):
         name = graphene.String(required=True)
         description = graphene.String()
         manager_id = graphene.String()
+        logo = Upload()
 
     team = graphene.Field(lambda: TeamType)
 
