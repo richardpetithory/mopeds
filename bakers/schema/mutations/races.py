@@ -36,8 +36,6 @@ class SaveRaceMutation(graphene.Mutation):
             return SaveRaceMutation(race=saved_race)
         except IntegrityError:
             raise GraphQLError(f"A race already exists for {kwargs.get("year")}")
-        except Exception as e:
-            raise GraphQLError(str(e))
 
 
 class DeleteRaceMutation(graphene.Mutation):

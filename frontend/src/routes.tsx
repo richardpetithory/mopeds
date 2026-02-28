@@ -1,6 +1,7 @@
 import {Layout} from "@/components/Layout.tsx"
 import {LoginPage} from "@/pages/auth/LoginPage.tsx"
 import {LogoutPage} from "@/pages/auth/LogoutPage.tsx"
+import {ProfilePage} from "@/pages/auth/ProfilePage.tsx"
 import {RegisterPage} from "@/pages/auth/RegisterPage.tsx"
 import {RaceDayEdit} from "@/pages/bakers/races/RaceDayEdit.tsx"
 import {RaceDayPage} from "@/pages/bakers/races/RaceDayPage.tsx"
@@ -24,6 +25,7 @@ export const PATH_RIDERS = "/riders"
 export const PATH_REGISTER = "/register"
 export const PATH_LOGIN = "/login"
 export const PATH_LOGOUT = "/logout"
+export const PATH_PROFILE = "/profile"
 
 export const routes: RouteObject[] = [
   {
@@ -35,6 +37,7 @@ export const routes: RouteObject[] = [
       {path: PATH_REGISTER, element: <RegisterPage />},
       {path: PATH_LOGIN, element: <LoginPage />},
       {path: PATH_LOGOUT, element: <LogoutPage />},
+      {path: PATH_PROFILE, element: <ProfilePage />},
       {
         path: "bakers",
         children: [

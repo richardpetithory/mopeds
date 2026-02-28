@@ -33,10 +33,14 @@ export const LoginPage = () => {
     refetchQueries: [GQL_CURRENT_RIDER_INFO],
   })
 
-  const {onSubmit, getInputProps} = useForm<Credentials>({
+  const {onSubmit, getInputProps, isDirty, isValid} = useForm<Credentials>({
     initialValues: {
       email: "",
       password: "",
+    },
+    validate: {
+      email: (value) => value.length < 1 && "Email is required",
+      password: (value) => value.length < 1 && "Password is required",
     },
   })
 
@@ -59,12 +63,12 @@ export const LoginPage = () => {
         <PasswordInput label={"Password"} {...getInputProps("password")} className={"w-100"} />
       </Group>
       <Group>
-        <Button type={"submit"} disabled={awaitingMutation}>
+        <Button type={"submit"} disabled={awaitingMutation || !(isDirty() && isValid())}>
           Log In
         </Button>
       </Group>
 
-      {error && (
+      {error?.message && error?.message !== "NONE" && (
         <Alert variant={"filled"} color={"red"} className={"fit-content"}>
           {error.message}
         </Alert>

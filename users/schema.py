@@ -3,6 +3,7 @@ import graphql_jwt
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from graphene_django import DjangoObjectType
+from graphql import GraphQLError
 
 from bakers.models import RaceTeamMembership
 from bakers.schema.types import RaceTeamMembershipType
@@ -55,22 +56,6 @@ class Queries(WrappedObjectType):
             return rider
         return None
 
-    #
-    # rider = graphene.Field(RiderType, id=graphene.String(required=True))
-    #
-    # @staticmethod
-    # def resolve_rider(_, info: graphene.ResolveInfo, id):
-    #     try:
-    #         return Rider.objects.filter(memberships__isnull=False).distinct().get(id=id)
-    #     except Rider.DoesNotExist:
-    #         return None
-    #
-    # riders = graphene.List(RiderType)
-    #
-    # @staticmethod
-    # def resolve_riders(_, info: graphene.ResolveInfo):
-    #     return Rider.objects.filter(memberships__isnull=False).distinct()
-
     team_members = graphene.List(
         RaceTeamMembershipType,
         team_id=graphene.String(required=True),
@@ -92,7 +77,7 @@ class RegisterMutation(graphene.Mutation):
     @staticmethod
     @validation_error_handler
     def mutate(_, info: graphene.ResolveInfo, name, email, password):
-        person = Rider(name=name, email=email, password=password)
+        person = Rider(name=name, email=email)
 
         errors = {}
 
@@ -115,9 +100,55 @@ class RegisterMutation(graphene.Mutation):
         return RegisterMutation(ok=True)
 
 
+class ProfileMutation(graphene.Mutation):
+    class Arguments:
+        name = graphene.String(required=True)
+        email = graphene.String(required=True)
+        password = graphene.String()
+
+    rider = graphene.Field(lambda: RiderType)
+
+    @staticmethod
+    @validation_error_handler
+    def mutate(_, info: graphene.ResolveInfo, **kwargs):
+        user = info.context.user
+
+        if not user:
+            raise GraphQLError("You need to be logged in for this action.")
+
+        rider = Rider.objects.get(id=user.id)
+
+        password = kwargs.pop("password", None)
+
+        for key, value in kwargs.items():
+            setattr(rider, key, value)
+
+        errors = {}
+
+        try:
+            rider.full_clean()
+            rider.save()
+        except ValidationError as e:
+            errors = errors | e.message_dict
+
+        if password:
+            try:
+                validate_password(password)
+                rider.set_password(password)
+                rider.save()
+            except ValidationError as e:
+                errors = errors | {"password": e.messages}
+
+        if errors:
+            raise ValidationError(errors)
+
+        return ProfileMutation(rider=rider)
+
+
 class Mutations(graphene.ObjectType):
     token_auth = graphql_jwt.ObtainJSONWebToken.Field()
     verify_token = graphql_jwt.Verify.Field()
     refresh_token = graphql_jwt.Refresh.Field()
 
     register = RegisterMutation.Field()
+    profile = ProfileMutation.Field()

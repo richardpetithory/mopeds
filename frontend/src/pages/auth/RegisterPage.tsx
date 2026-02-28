@@ -1,8 +1,9 @@
+import {FormFooter} from "@/components/FormFooter.tsx"
 import parseDjangoErrors from "@/lib/parseDjangoErrors.ts"
 import {PATH_LOGIN} from "@/routes.tsx"
 import {gql} from "@apollo/client"
 import {useMutation} from "@apollo/client/react"
-import {Alert, Button, Group, PasswordInput, TextInput} from "@mantine/core"
+import {Group, PasswordInput, TextInput} from "@mantine/core"
 import {useForm} from "@mantine/form"
 import {useNavigate} from "react-router"
 
@@ -31,7 +32,7 @@ export const RegisterPage = () => {
 
   const [doLogin, {loading: awaitingMutation, error}] = useMutation<RegisterResponse>(REGISTER_MUTATION)
 
-  const {onSubmit, getInputProps, setErrors} = useForm<RiderInput>({
+  const form = useForm<RiderInput>({
     initialValues: {
       name: "",
       email: "",
@@ -46,31 +47,21 @@ export const RegisterPage = () => {
           navigate(PATH_LOGIN, {replace: true})
         }
       })
-      .catch((errorLike) => setErrors(parseDjangoErrors(errorLike)))
+      .catch((errorLike) => form.setErrors(parseDjangoErrors(errorLike)))
   }
 
   return (
-    <form onSubmit={onSubmit(handleSubmit)}>
+    <form onSubmit={form.onSubmit(handleSubmit)}>
       <Group>
-        <TextInput type={"name"} label={"Name"} {...getInputProps("name")} className={"w-100"} autoFocus />
+        <TextInput type={"name"} label={"Name"} {...form.getInputProps("name")} className={"w-100"} autoFocus />
       </Group>
       <Group>
-        <TextInput type={"email"} label={"Email"} {...getInputProps("email")} className={"w-100"} />
+        <TextInput type={"email"} label={"Email"} {...form.getInputProps("email")} className={"w-100"} />
       </Group>
       <Group>
-        <PasswordInput label={"Password"} {...getInputProps("password")} className={"w-100"} />
+        <PasswordInput label={"Password"} {...form.getInputProps("password")} className={"w-100"} />
       </Group>
-      <Group>
-        <Button type={"submit"} disabled={awaitingMutation}>
-          Register
-        </Button>
-      </Group>
-
-      {error?.message && error?.message !== "NONE" && (
-        <Alert variant={"filled"} color={"red"} className={"fit-content"}>
-          {error?.message}
-        </Alert>
-      )}
+      <FormFooter buttonTitle={"Register"} awaitingMutation={awaitingMutation} error={error} form={form} />
     </form>
   )
 }

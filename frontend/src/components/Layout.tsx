@@ -1,15 +1,18 @@
 import {useRiderContext} from "@/lib/userContext/riderContext.ts"
-import {PATH_LOGIN, PATH_LOGOUT, PATH_RACES, PATH_REGISTER, PATH_RIDERS, PATH_TEAMS} from "@/routes.tsx"
+import {PATH_LOGIN, PATH_LOGOUT, PATH_PROFILE, PATH_RACES, PATH_REGISTER, PATH_RIDERS, PATH_TEAMS} from "@/routes.tsx"
 import {AppShell, Divider, NavLink} from "@mantine/core"
 import {useDisclosure} from "@mantine/hooks"
 import {isArray, some} from "lodash"
-import {LuDonut} from "react-icons/lu"
+import {LuDonut, LuLogIn, LuLogOut} from "react-icons/lu"
 import {Link, Outlet, ScrollRestoration, useLocation} from "react-router"
 
 import logo from "@/assets/logo.png"
+import {CurrentRiderName} from "@/components/CurrentRiderName.tsx"
 import {NotFoundContext} from "@/lib/NotFoundContext.ts"
 import {NotFoundPage} from "@/pages/NotFoundPage.tsx"
 import {useContext, useEffect, useState} from "react"
+import {FaPersonRunning} from "react-icons/fa6"
+import {MdOutlinePersonAddAlt1} from "react-icons/md"
 
 export const Layout = () => {
   const {currentRider} = useRiderContext()
@@ -60,11 +63,60 @@ export const Layout = () => {
         <Divider />
         {!currentRider?.id && (
           <>
-            <NavLink label="Register" component={Link} to={PATH_REGISTER} active={isActive(PATH_REGISTER)} />
-            <NavLink label="Log In" component={Link} to={PATH_LOGIN} active={isActive(PATH_LOGIN)} />
+            <NavLink
+              label={
+                <div className={"flex items-center gap-1"}>
+                  <span>Register</span>
+                  <span className={"m-auto"} />
+                  <MdOutlinePersonAddAlt1 />
+                </div>
+              }
+              component={Link}
+              to={PATH_REGISTER}
+              active={isActive(PATH_REGISTER)}
+            />
+            <NavLink
+              label={
+                <div className={"flex items-center gap-1"}>
+                  <span>Log In</span>
+                  <span className={"m-auto"} />
+                  <LuLogIn />
+                </div>
+              }
+              component={Link}
+              to={PATH_LOGIN}
+              active={isActive(PATH_LOGIN)}
+            />
           </>
         )}
-        {currentRider?.id && <NavLink label="Log Out" component={Link} to={PATH_LOGOUT} />}
+        {currentRider?.id && (
+          <>
+            <NavLink
+              label={
+                <div className={"flex items-center gap-1"}>
+                  <CurrentRiderName />
+                  <span className={"m-auto"} />
+                  <FaPersonRunning />
+                </div>
+              }
+              component={Link}
+              to={PATH_PROFILE}
+              active={isActive(PATH_PROFILE)}
+            />
+            <NavLink
+              label={
+                <div className={"flex items-center gap-1"}>
+                  <span>Log Out</span>
+                  <span className={"m-auto"} />
+                  <LuLogOut />
+                </div>
+              }
+              component={Link}
+              to={PATH_LOGOUT}
+            />
+          </>
+        )}
+        <div className={"mb-10"} />
       </AppShell.Navbar>
 
       <AppShell.Main>
