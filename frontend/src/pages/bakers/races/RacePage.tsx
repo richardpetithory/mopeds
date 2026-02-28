@@ -162,17 +162,18 @@ export const RacePage = () => {
                       <Link to={`/bakers/races/${raceId}/${raceDay.id}`}>Day {index + 1}</Link>
                     </Table.Td>
                     <Table.Td className="align-top">
-                      {!raceDay.previousDay && (
+                      {!raceDay.previousDay && !raceDay.startingIsPreviousFinish && (
                         <RaceDayStartingDisplay
-                          locationValues={
-                            raceDay.dayNumber === 1
-                              ? {
-                                  startingAddress: data.race.meetupAddress,
-                                  startingAddressCoordinates: data.race.meetupAddressCoordinates,
-                                  startingLocation: data.race.meetupLocation,
-                                }
-                              : (data.race as unknown as StartingLocationDisplayValues)
-                          }
+                          locationValues={data.race as unknown as StartingLocationDisplayValues}
+                        />
+                      )}
+                      {!raceDay.previousDay && raceDay.startingIsPreviousFinish && (
+                        <RaceDayStartingDisplay
+                          locationValues={{
+                            startingAddress: data.race.meetupAddress,
+                            startingAddressCoordinates: data.race.meetupAddressCoordinates,
+                            startingLocation: data.race.meetupLocation,
+                          }}
                         />
                       )}
                       {raceDay.previousDay && raceDay.startingIsPreviousFinish && (
