@@ -164,7 +164,15 @@ export const RacePage = () => {
                     <Table.Td className="align-top">
                       {!raceDay.previousDay && (
                         <RaceDayStartingDisplay
-                          locationValues={data.race as unknown as StartingLocationDisplayValues}
+                          locationValues={
+                            raceDay.dayNumber === 1
+                              ? {
+                                  startingAddress: data.race.meetupAddress,
+                                  startingAddressCoordinates: data.race.meetupAddressCoordinates,
+                                  startingLocation: data.race.meetupLocation,
+                                }
+                              : (data.race as unknown as StartingLocationDisplayValues)
+                          }
                         />
                       )}
                       {raceDay.previousDay && raceDay.startingIsPreviousFinish && (
