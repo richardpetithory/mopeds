@@ -67,7 +67,6 @@ export const LoginPage = () => {
           Log In
         </Button>
       </Group>
-
       {error?.message && error?.message !== "NONE" && (
         <Alert variant={"filled"} color={"red"} className={"fit-content"}>
           {error.message}

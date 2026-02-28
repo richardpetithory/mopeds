@@ -6,7 +6,8 @@ import {
   type RaceTeamMembershipInvitationInput,
   type SaveTeamRaceMemberShipInvitationResponse,
 } from "@/lib/gql/bakers/teams.ts"
-import type {RaceTeam, RaceTeamMembership} from "@/lib/models/bakers.ts"
+import type {RaceTeam, RaceTeamMembership, Team} from "@/lib/models/bakers.ts"
+import {NotFoundPage} from "@/pages/NotFoundPage.tsx"
 import {gql} from "@apollo/client"
 import {useMutation, useQuery} from "@apollo/client/react"
 import {Alert, Button, Group, Select} from "@mantine/core"
@@ -16,6 +17,9 @@ import {useNavigate, useParams} from "react-router"
 
 export const GQL_DEPENDENCY_DATA = gql`
   query Races($teamId: String!) {
+    team(id: $teamId) {
+      id
+    }
     teamRaces(teamId: $teamId) {
       race {
         id
@@ -35,29 +39,45 @@ export const GQL_DEPENDENCY_DATA = gql`
 `
 
 export interface DependencyData {
+  team: Team
   teamRaces: RaceTeam[]
   teamMembers: RaceTeamMembership[]
 }
 
 export const RaceTeamMembershipInvite = () => {
-  const navigate = useNavigate()
-
   const {teamId} = useParams()
 
-  const [doSave, {loading: awaitingMutation, error}] = useMutation<SaveTeamRaceMemberShipInvitationResponse>(
-    GQL_TEAM_RACE_MEMBERSHIP_INVITATION_MUTATION
-  )
-
-  const {data: dependencyData, loading: loadingRaces} = useQuery<DependencyData>(GQL_DEPENDENCY_DATA, {
+  const {data: dependencyData, loading: loadingDependencyData} = useQuery<DependencyData>(GQL_DEPENDENCY_DATA, {
     fetchPolicy: "network-only",
     variables: {
       teamId: teamId || "",
     },
   })
 
-  const {onSubmit, getInputProps} = useForm<RaceTeamMembershipInvitationInput>({
+  if (loadingDependencyData) return <Loading />
+
+  if (!dependencyData?.team) return <NotFoundPage />
+
+  if (!dependencyData) return null
+
+  return <RaceTeamMembershipInviteForm teamId={dependencyData?.team.id} dependencyData={dependencyData} />
+}
+
+interface RaceTeamMembershipInviteFormProps {
+  teamId: string
+  dependencyData: DependencyData
+}
+
+const RaceTeamMembershipInviteForm = ({teamId, dependencyData}: RaceTeamMembershipInviteFormProps) => {
+  const navigate = useNavigate()
+
+  const [doSave, {loading: awaitingMutation, error}] = useMutation<SaveTeamRaceMemberShipInvitationResponse>(
+    GQL_TEAM_RACE_MEMBERSHIP_INVITATION_MUTATION
+  )
+
+  const {onSubmit, getInputProps, isDirty} = useForm<RaceTeamMembershipInvitationInput>({
     initialValues: {
-      teamId: teamId || null,
+      teamId: teamId,
       memberId: null,
       raceId: null,
     },
@@ -89,8 +109,6 @@ export const RaceTeamMembershipInvite = () => {
     })
   }
 
-  if (loadingRaces) return <Loading />
-
   const existingMembers = dependencyData?.teamMembers.map((teamMembership) => teamMembership.member.id) || []
 
   return (
@@ -111,12 +129,11 @@ export const RaceTeamMembershipInvite = () => {
         />
       </Group>
       <Group>
-        <Button type={"submit"} disabled={awaitingMutation}>
-          Save
+        <Button type={"submit"} disabled={awaitingMutation || !isDirty()}>
+          Invite
         </Button>
       </Group>
-
-      {error && (
+      {error?.message && error?.message !== "NONE" && (
         <Alert variant={"filled"} color={"red"} className={"fit-content"}>
           {error.message}
         </Alert>

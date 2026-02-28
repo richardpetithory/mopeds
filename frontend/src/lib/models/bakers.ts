@@ -3,12 +3,14 @@ import type {Coordinates} from "@/lib/types.ts"
 
 export type Race = {
   id: string
-  year: number
+  year: string
   name: string
   description: string
-  startingAddress: string
-  startingAddressCoordinates: Coordinates
-  startingLocation: string
+  meetupDatetime: Date
+  meetupAddress: string
+  meetupAddressCoordinates: Coordinates
+  meetupLocation: string
+  meetupDescription: string
 }
 
 export type RaceDay = {

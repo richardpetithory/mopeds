@@ -6,6 +6,7 @@ import {
   type SaveRaceTeamResponse,
 } from "@/lib/gql/bakers/teams.ts"
 import type {Race, RaceTeam} from "@/lib/models/bakers.ts"
+import {NotFoundPage} from "@/pages/NotFoundPage.tsx"
 import {gql} from "@apollo/client"
 import {useMutation, useQuery} from "@apollo/client/react"
 import {Alert, Button, Group, Select} from "@mantine/core"
@@ -34,20 +35,33 @@ export interface DependencyData {
 }
 
 export const RaceTeamEdit = () => {
-  const navigate = useNavigate()
-
   const {teamId} = useParams()
-
-  const [doSave, {loading: awaitingMutation, error}] = useMutation<SaveRaceTeamResponse>(GQL_RACE_TEAM_MUTATION)
 
   const {data: dependencyData, loading: loadingDependencyData} = useQuery<DependencyData>(GQL_DEPENDENCY_DATA, {
     fetchPolicy: "network-only",
     variables: {
-      teamId: teamId || "",
+      teamId: teamId,
     },
   })
 
-  const {onSubmit, getInputProps} = useForm<RaceTeamInput>({
+  if (!teamId) return <NotFoundPage />
+
+  if (loadingDependencyData) return <Loading />
+
+  return <RaceTeamEditForm teamId={teamId} dependencyData={dependencyData!} />
+}
+
+interface RaceTeamEditFormProps {
+  teamId: string
+  dependencyData: DependencyData
+}
+
+const RaceTeamEditForm = ({teamId, dependencyData}: RaceTeamEditFormProps) => {
+  const navigate = useNavigate()
+
+  const [doSave, {loading: awaitingMutation, error}] = useMutation<SaveRaceTeamResponse>(GQL_RACE_TEAM_MUTATION)
+
+  const {onSubmit, getInputProps, isDirty} = useForm<RaceTeamInput>({
     initialValues: {
       teamId: teamId || null,
       raceId: null,
@@ -70,20 +84,17 @@ export const RaceTeamEdit = () => {
         notifications.show({
           message: `Successfully ${teamId ? "updated" : "created"} team`,
         })
-        console.log(saveResponse?.data)
         navigate(`/bakers/teams/${saveResponse?.data?.saveTeamRace.teamRace.team.id}`)
       }
     })
   }
 
-  if (loadingDependencyData) return <Loading />
-
   const existingRaceIds = dependencyData?.teamRaces.map((teamRace) => teamRace.race.id)
-  console.log(dependencyData)
+
   const availableRaces = dependencyData?.races.filter((race) => !existingRaceIds?.includes(race.id))
 
   return (
-    <form onSubmit={onSubmit(handleSubmit)}>
+    <form onSubmit={onSubmit(handleSubmit)} className={"page-form"}>
       <Group>
         <Select
           label={"Race"}
@@ -97,12 +108,11 @@ export const RaceTeamEdit = () => {
         />
       </Group>
       <Group>
-        <Button type={"submit"} disabled={awaitingMutation}>
+        <Button type={"submit"} disabled={awaitingMutation || !isDirty()}>
           Save
         </Button>
       </Group>
-
-      {error && (
+      {error?.message && error?.message !== "NONE" && (
         <Alert variant={"filled"} color={"red"} className={"fit-content"}>
           {error.message}
         </Alert>

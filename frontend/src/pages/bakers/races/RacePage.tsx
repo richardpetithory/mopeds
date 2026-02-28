@@ -8,19 +8,26 @@ import {
   type StartingLocationDisplayValues,
 } from "@/components/locationDisplay/RaceDayStartingDisplay.tsx"
 import {PageHeader} from "@/components/PageHeader/PageHeader.tsx"
-import {
-  type DeleteRaceResponse,
-  GQL_RACE_MUTATION_DELETE,
-  GQL_RACE_SUMMARY,
-  GQL_RACES,
-  type RaceSummaryResponse,
-} from "@/lib/gql/bakers/races.ts"
+import {GQL_RACE_SUMMARY, GQL_RACES, type RaceSummaryResponse} from "@/lib/gql/bakers/races.ts"
 import {NotFoundPage} from "@/pages/NotFoundPage.tsx"
+import {gql} from "@apollo/client"
 import {useMutation, useQuery} from "@apollo/client/react"
-import {Button, Card, Table} from "@mantine/core"
+import {Button, Card, Divider, Table} from "@mantine/core"
 import {useModals} from "@mantine/modals"
 import {notifications} from "@mantine/notifications"
 import {Link, useNavigate, useParams} from "react-router"
+
+const GQL_RACE_MUTATION_DELETE = gql`
+  mutation DeleteRace($id: String) {
+    deleteRace(id: $id) {
+      ok
+    }
+  }
+`
+
+interface DeleteRaceResponse {
+  deleteRace: {ok: boolean}
+}
 
 export const RacePage = () => {
   const modals = useModals()
@@ -93,7 +100,13 @@ export const RacePage = () => {
 
       {data.race.description.trim() && (
         <Card shadow="sm" padding="md" radius="md" withBorder className={"mx-2 my-4 fit-content"}>
-          {data.race.description}
+          <span className={"whitespace-pre"}>{data.race.description}</span>
+          {data.race.meetupDescription && (
+            <>
+              <Divider className={"my-4"} />
+              <div className={"whitespace-pre"}>{data.race.meetupDescription}</div>
+            </>
+          )}
         </Card>
       )}
 

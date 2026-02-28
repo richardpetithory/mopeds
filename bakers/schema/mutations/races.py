@@ -10,12 +10,14 @@ from bakers.schema.types import RaceType, RaceDayType, RaceTeamTimeType
 class SaveRaceMutation(graphene.Mutation):
     class Arguments:
         id = graphene.String()
-        year = graphene.Int(required=True)
+        year = graphene.String(required=True)
         name = graphene.String(required=True)
         description = graphene.String()
-        starting_address = graphene.String()
-        starting_address_coordinates = graphene.String()
-        starting_location = graphene.String()
+        meetup_datetime = graphene.types.datetime.DateTime()
+        meetup_address = graphene.String()
+        meetup_address_coordinates = graphene.String()
+        meetup_location = graphene.String()
+        meetup_description = graphene.String()
 
     race = graphene.Field(lambda: RaceType)
 

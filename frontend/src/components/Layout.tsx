@@ -11,7 +11,7 @@ import {CurrentRiderName} from "@/components/CurrentRiderName.tsx"
 import {NotFoundContext} from "@/lib/NotFoundContext.ts"
 import {NotFoundPage} from "@/pages/NotFoundPage.tsx"
 import {useContext, useEffect, useState} from "react"
-import {FaPersonRunning} from "react-icons/fa6"
+import {BsFillPersonLinesFill} from "react-icons/bs"
 import {MdOutlinePersonAddAlt1} from "react-icons/md"
 
 export const Layout = () => {
@@ -96,7 +96,7 @@ export const Layout = () => {
                 <div className={"flex items-center gap-1"}>
                   <CurrentRiderName />
                   <span className={"m-auto"} />
-                  <FaPersonRunning />
+                  <BsFillPersonLinesFill />
                 </div>
               }
               component={Link}

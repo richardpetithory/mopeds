@@ -1,4 +1,5 @@
 import {Loading} from "@/components/Loading.tsx"
+import {PageHeader} from "@/components/PageHeader/PageHeader.tsx"
 import {RiderPickerInput} from "@/components/RiderPickerInput.tsx"
 import {
   GQL_TEAM,
@@ -8,19 +9,17 @@ import {
   type SaveTeamResponse,
   type TeamResponse,
 } from "@/lib/gql/bakers/teams.ts"
+import type {Team} from "@/lib/models/bakers.ts"
+import {useRiderContext} from "@/lib/userContext/riderContext.ts"
 import {useMutation, useQuery} from "@apollo/client/react"
 import {Alert, Button, Group, Textarea, TextInput} from "@mantine/core"
 import {useForm} from "@mantine/form"
 import {notifications} from "@mantine/notifications"
-import {useEffect} from "react"
-import {useNavigate, useParams} from "react-router"
+import {omit} from "lodash"
+import {Link, useNavigate, useParams} from "react-router"
 
 export const TeamEdit = () => {
-  const navigate = useNavigate()
-
   const {teamId} = useParams()
-
-  const [doSave, {loading: awaitingMutation, error}] = useMutation<SaveTeamResponse>(GQL_TEAM_MUTATION)
 
   const {data, loading: loadingTeam} = useQuery<TeamResponse>(GQL_TEAM, {
     variables: {
@@ -29,26 +28,38 @@ export const TeamEdit = () => {
     skip: !teamId,
   })
 
-  const {setValues, onSubmit, getInputProps} = useForm<SaveTeamInput>({
-    initialValues: {
-      id: null,
-      name: "",
-      description: "",
-      managerId: null,
-    },
-  })
+  if (loadingTeam) return <Loading />
 
-  useEffect(() => {
-    if (data?.team) {
-      setValues({...data?.team, managerId: data.team.manager.id})
-    }
-  }, [data?.team, setValues])
+  if (!data?.team) return null
+
+  return <TeamEditForm team={data?.team} />
+}
+
+const TeamEditForm = ({team}: {team: Team}) => {
+  const navigate = useNavigate()
+  const {currentRider} = useRiderContext()
+
+  const [doSave, {loading: awaitingMutation, error}] = useMutation<SaveTeamResponse>(GQL_TEAM_MUTATION)
+
+  const {onSubmit, getInputProps, isDirty} = useForm<SaveTeamInput>({
+    initialValues: team
+      ? {
+          ...omit(team, "manager"),
+          managerId: team.manager.id,
+        }
+      : {
+          id: null,
+          name: "",
+          description: "",
+          managerId: currentRider?.id || null,
+        },
+  })
 
   const handleSubmit = (data: SaveTeamInput) => {
     doSave({variables: data, refetchQueries: [GQL_TEAMS]}).then((saveResponse) => {
       if (saveResponse.data) {
         notifications.show({
-          message: `Successfully ${teamId ? "updated" : "created"} team`,
+          message: `Successfully ${data.id ? "updated" : "created"} team`,
         })
 
         navigate(`/bakers/teams/${saveResponse?.data?.saveTeam.team.id}`)
@@ -56,30 +67,52 @@ export const TeamEdit = () => {
     })
   }
 
-  if (loadingTeam) return <Loading />
-
   return (
-    <form onSubmit={onSubmit(handleSubmit)}>
-      <Group>
-        <TextInput label={"Name"} {...getInputProps("name")} autoFocus={true} />
-      </Group>
-      <Group>
-        <RiderPickerInput label={"Manager"} {...getInputProps("managerId")} />
-      </Group>
-      <Group>
-        <Textarea label={"Description"} {...getInputProps("description")} />
-      </Group>
-      <Group>
-        <Button type={"submit"} disabled={awaitingMutation}>
-          Save
-        </Button>
-      </Group>
+    <>
+      <PageHeader
+        breadCrumbs={[{label: "Bakers", to: "/bakers"}, {label: "Teams", to: "/bakers/teams"}, {label: team.name}]}
+        staffActions={
+          <>
+            {(currentRider?.id === team?.manager?.id || currentRider?.isStaff) && (
+              <>
+                <Link to={`/bakers/teams/${team.id}/invite`}>
+                  <Button color={"green"}>Invite Member to Race</Button>
+                </Link>
 
-      {error && (
-        <Alert variant={"filled"} color={"red"} className={"fit-content"}>
-          {error.message}
-        </Alert>
-      )}
-    </form>
+                <Link to={`/bakers/teams/${team.id}/joinRace`}>
+                  <Button>Join Race</Button>
+                </Link>
+
+                <Link to={`/bakers/teams/${team.id}/edit`}>
+                  <Button>Edit</Button>
+                </Link>
+              </>
+            )}
+          </>
+        }
+      />
+
+      <form onSubmit={onSubmit(handleSubmit)} className={"page-form"}>
+        <Group>
+          <TextInput label={"Name"} {...getInputProps("name")} autoFocus={true} />
+        </Group>
+        <Group>
+          <RiderPickerInput label={"Manager"} {...getInputProps("managerId")} />
+        </Group>
+        <Group>
+          <Textarea label={"Description"} {...getInputProps("description")} />
+        </Group>
+        <Group>
+          <Button type={"submit"} disabled={awaitingMutation || !isDirty()}>
+            Save
+          </Button>
+        </Group>
+        {error?.message && error?.message !== "NONE" && (
+          <Alert variant={"filled"} color={"red"} className={"fit-content"}>
+            {error.message}
+          </Alert>
+        )}
+      </form>
+    </>
   )
 }

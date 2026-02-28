@@ -11,8 +11,13 @@ class Race(models.Model):
         verbose_name = _("Races")
         verbose_name_plural = _("Races")
 
-    year = models.IntegerField(
-        _("Year"), null=False, default=date.today().year, unique=True
+    year = models.CharField(
+        _("Year"),
+        max_length=4,
+        blank=False,
+        null=False,
+        default=date.today().year,
+        unique=True,
     )
 
     name = models.CharField(
@@ -21,24 +26,35 @@ class Race(models.Model):
 
     description = models.TextField(_("Description"), blank=True, null=False, default="")
 
-    starting_address = models.TextField(
-        _("Starting Line Address"), blank=True, null=False, default=""
+    meetup_datetime = models.DateTimeField(
+        _("Meetup Date & Time"),
+        blank=True,
+        null=False,
+        default=timezone.now().replace(hour=10, minute=0, second=0, microsecond=0),
     )
 
-    starting_address_coordinates = models.CharField(
-        _("Starting line location longitude and lattitude"),
+    meetup_address = models.TextField(
+        _("Meetup Address"), blank=True, null=False, default=""
+    )
+
+    meetup_address_coordinates = models.CharField(
+        _("Meetup location longitude and lattitude"),
         max_length=100,
         blank=True,
         null=False,
         default="",
     )
 
-    starting_location = models.CharField(
-        _("Starting Line Short Name"),
+    meetup_location = models.CharField(
+        _("Meetup Location Short Name"),
         max_length=50,
         blank=True,
         null=False,
         default="",
+    )
+
+    meetup_description = models.TextField(
+        _("Meetup Description"), blank=True, null=False, default=""
     )
 
     def __str__(self):

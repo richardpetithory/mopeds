@@ -10,3 +10,6 @@ gunicorn==25.1.0
 pillow==12.1.1
 psycopg2-binary==2.9.11
 whitenoise==6.12.0
+PyYAML==6.0.3
+graphene
+graphql-core

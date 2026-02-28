@@ -1,0 +1,160 @@
+- model: bakers.race
+  pk: 1
+  fields:
+    year: '2026'
+    name: Midwestern Exposure
+    description: We are happy to announce that the 2026 Bakers Dozen Event will start
+      on July 19th in Duluth Minnesota!!
+    meetup_datetime: 2026-07-19 19:00:00
+    meetup_address: '7000 Pulaski St
+
+      Duluth, MN
+
+      55807'
+    meetup_address_coordinates: ''
+    meetup_location: Duluth, MN
+    meetup_description: 'This is the day you''re waiting for! Race meetup and final
+      preparations for the run!
+
+
+      We will gather all teams and participants together at 7pm Central Time at a
+      TBD location to go over the rules and general cadence of the race
+
+
+      Make sure you''ve got your wrenches and sleeping bag!
+
+
+      Meetup will be all through town but the event happens at the campground!'
+- model: bakers.raceday
+  pk: 1
+  fields:
+    previous_day: null
+    race: 1
+    day_number: 1
+    description: Get yourself a room at the Econo Lodge Lakeview !
+    day_off: false
+    starting_datetime: 2026-07-20 10:00:00
+    starting_is_previous_finish: true
+    starting_address: ''
+    starting_address_coordinates: ''
+    starting_location: ''
+    finishing_address: 'Econo Lodge Lakeview
+
+      2050 US-41
+
+      Marquette, MI
+
+      49855'
+    finishing_address_coordinates: ''
+    finishing_location: Marquette, MI
+    commentary: ''
+- model: bakers.raceday
+  pk: 2
+  fields:
+    previous_day: 1
+    race: 1
+    day_number: 2
+    description: TIKI TIME at the ONLY Tiki bar on the Wisconsin River!
+    day_off: false
+    starting_datetime: 2026-07-21 10:00:00
+    starting_is_previous_finish: true
+    starting_address: ''
+    starting_address_coordinates: ''
+    starting_location: ''
+    finishing_address: 'Trader''s Island Campground
+
+      7608 Wittwer Rd
+
+      Arena, WI
+
+      53503'
+    finishing_address_coordinates: ''
+    finishing_location: Arena, WI
+    commentary: ''
+- model: bakers.raceday
+  pk: 3
+  fields:
+    previous_day: 2
+    race: 1
+    day_number: 3
+    description: Google the dunes maaaaan! See you at the beach
+    day_off: false
+    starting_datetime: 2026-02-27 15:00:00
+    starting_is_previous_finish: true
+    starting_address: ''
+    starting_address_coordinates: ''
+    starting_location: ''
+    finishing_address: '1600 N 25 E
+
+      Chesterton, IN
+
+      46304'
+    finishing_address_coordinates: ''
+    finishing_location: Chesterton, IN
+    commentary: ''
+- model: bakers.raceday
+  pk: 4
+  fields:
+    previous_day: 3
+    race: 1
+    day_number: 4
+    description: Secret Campground location to be revealed later! Near Ludington!
+    day_off: false
+    starting_datetime: 2026-07-23 10:00:00
+    starting_is_previous_finish: true
+    starting_address: ''
+    starting_address_coordinates: ''
+    starting_location: ''
+    finishing_address: 'Pines Point Campground
+
+      168th Ave
+
+      Hesperia, MI
+
+      49421
+
+
+      '
+    finishing_address_coordinates: ''
+    finishing_location: Hesperia, MI
+    commentary: ''
+- model: bakers.raceday
+  pk: 5
+  fields:
+    previous_day: 4
+    race: 1
+    day_number: 5
+    description: Get to the Cabins!
+    day_off: false
+    starting_datetime: 2026-07-24 10:00:00
+    starting_is_previous_finish: true
+    starting_address: ''
+    starting_address_coordinates: ''
+    starting_location: ''
+    finishing_address: '909 Tulip St
+
+      Gaylord, MI
+
+      49735'
+    finishing_address_coordinates: ''
+    finishing_location: Gaylord, MI
+    commentary: ''
+- model: bakers.raceteam
+  pk: 2
+  fields:
+    race: 1
+    team: 2
+- model: bakers.team
+  pk: 2
+  fields:
+    name: TEAMEAT
+    description: ''
+    logo: ''
+    manager: 1
+- model: bakers.raceteammembership
+  pk: 2
+  fields:
+    team: 2
+    member: 1
+    race: 1
+    invited: true

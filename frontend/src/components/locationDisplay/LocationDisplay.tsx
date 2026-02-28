@@ -16,7 +16,12 @@ export const LocationDisplay = ({address, addressCoordinates, location, classNam
   const clipboard = useClipboard({timeout: 500})
 
   const display = (
-    <div {...(address ? {role: "button"} : {})} className={"underline cursor-pointer text-nowrap"}>
+    <div
+      {...(address ? {role: "button"} : {})}
+      className={cx("underline cursor-pointer text-nowrap", {
+        "rainbow-text": (location || "").toLowerCase().includes("gay"),
+      })}
+    >
       {location}
     </div>
   )

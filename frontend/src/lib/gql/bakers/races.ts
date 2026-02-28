@@ -8,74 +8,17 @@ export const GQL_RACE = gql`
       year
       name
       description
+      meetupDatetime
+      meetupAddress
+      meetupAddressCoordinates
+      meetupLocation
+      meetupDescription
     }
   }
 `
 
 export interface RaceResponse {
   race: Race
-}
-
-// ----------------------------------------------------------------------------
-
-export interface SaveRaceInput {
-  id: string | null
-  year: number
-  name: string
-  description?: string
-  startingAddress: string
-  startingAddressCoordinates: string
-  startingLocation: string
-}
-
-export const GQL_RACE_MUTATION_SAVE = gql`
-  mutation SaveRace(
-    $id: String
-    $year: Int!
-    $name: String!
-    $description: String
-    $startingAddress: String
-    $startingAddressCoordinates: String
-    $startingLocation: String
-  ) {
-    saveRace(
-      id: $id
-      year: $year
-      name: $name
-      description: $description
-      startingAddress: $startingAddress
-      startingAddressCoordinates: $startingAddressCoordinates
-      startingLocation: $startingLocation
-    ) {
-      race {
-        id
-        year
-        name
-        description
-        startingAddress
-        startingAddressCoordinates
-        startingLocation
-      }
-    }
-  }
-`
-
-export interface SaveRaceResponse {
-  saveRace: {race: Race}
-}
-
-// ----------------------------------------------------------------------------
-
-export const GQL_RACE_MUTATION_DELETE = gql`
-  mutation DeleteRace($id: String) {
-    deleteRace(id: $id) {
-      ok
-    }
-  }
-`
-
-export interface DeleteRaceResponse {
-  deleteRace: {ok: boolean}
 }
 
 // ----------------------------------------------------------------------------
@@ -104,9 +47,11 @@ export const GQL_RACE_SUMMARY = gql`
       year
       name
       description
-      startingAddress
-      startingAddressCoordinates
-      startingLocation
+      meetupDatetime
+      meetupAddress
+      meetupAddressCoordinates
+      meetupLocation
+      meetupDescription
     }
     raceDays(raceId: $id) {
       id
@@ -249,9 +194,10 @@ export const GQL_RACE_DAY_SUMMARY = gql`
       id
       year
       name
-      startingAddress
-      startingAddressCoordinates
-      startingLocation
+      meetupDatetime
+      meetupAddress
+      meetupAddressCoordinates
+      meetupLocation
     }
     raceTeamTimes(raceId: $raceId, dayId: $dayId) {
       id

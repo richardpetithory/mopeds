@@ -21,7 +21,6 @@ export const TeamPage = () => {
 
   if (!data) return <Loading />
 
-  console.log(data.team)
   if (!data.team) return <NotFoundPage />
 
   return (
