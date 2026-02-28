@@ -52,9 +52,11 @@ export const LocationDisplay = ({address, addressCoordinates, location, classNam
         </HoverCard.Dropdown>
       </HoverCard>
 
-      <Link to={`https://www.google.com/maps/place/${addressCoordinates}`} target="_blank">
-        <FaMapMarkedAlt color={"lightGreen"} />
-      </Link>
+      {addressCoordinates && (
+        <Link to={`https://www.google.com/maps/place/${addressCoordinates}`} target="_blank">
+          <FaMapMarkedAlt color={"lightGreen"} />
+        </Link>
+      )}
     </div>
   )
 }

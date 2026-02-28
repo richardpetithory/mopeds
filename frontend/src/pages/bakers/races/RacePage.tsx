@@ -112,28 +112,6 @@ export const RacePage = () => {
 
       <div className={"flex flex-col gap-6 ps-2"}>
         <div>
-          <h1>Race Results</h1>
-          <Table className="fit-content">
-            <Table.Thead>
-              <Table.Tr>
-                <Table.Th>Team</Table.Th>
-                <Table.Th>Total Time</Table.Th>
-              </Table.Tr>
-            </Table.Thead>
-            <Table.Tbody>
-              {data.raceSummary.map((summaryRecord) => (
-                <Table.Tr key={summaryRecord.teamId}>
-                  <Table.Td className="font-medium">
-                    <Link to={`/bakers/teams/${summaryRecord.teamId}`}>{summaryRecord.teamName}</Link>
-                  </Table.Td>
-                  <Table.Td>{summaryRecord.totalDurationHours}</Table.Td>
-                </Table.Tr>
-              ))}
-            </Table.Tbody>
-          </Table>
-        </div>
-
-        <div>
           <h1>Race Days</h1>
           <Table className="fit-content">
             <Table.Thead>
@@ -192,6 +170,28 @@ export const RacePage = () => {
                   </Table.Tr>
                 )
               })}
+            </Table.Tbody>
+          </Table>
+        </div>
+
+        <div>
+          <h1>Race Results</h1>
+          <Table className="fit-content">
+            <Table.Thead>
+              <Table.Tr>
+                <Table.Th>Team</Table.Th>
+                <Table.Th>Total Time</Table.Th>
+              </Table.Tr>
+            </Table.Thead>
+            <Table.Tbody>
+              {data.raceSummary.map((summaryRecord) => (
+                <Table.Tr key={summaryRecord.teamId}>
+                  <Table.Td className="font-medium">
+                    <Link to={`/bakers/teams/${summaryRecord.teamId}`}>{summaryRecord.teamName}</Link>
+                  </Table.Td>
+                  <Table.Td>{summaryRecord.totalDurationHours}</Table.Td>
+                </Table.Tr>
+              ))}
             </Table.Tbody>
           </Table>
         </div>
